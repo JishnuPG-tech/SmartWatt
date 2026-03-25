@@ -1,3 +1,12 @@
+<p align="center">
+	<img src="https://img.shields.io/badge/Next.js-16-111111" alt="Next.js" />
+	<img src="https://img.shields.io/badge/React-19-149ECA" alt="React" />
+	<img src="https://img.shields.io/badge/TypeScript-5-3178C6" alt="TypeScript" />
+	<img src="https://img.shields.io/badge/Tailwind-4-0EA5E9" alt="Tailwind" />
+	<img src="https://img.shields.io/badge/Recharts-Visualization-1E88E5" alt="Recharts" />
+	<img src="https://img.shields.io/badge/License-MIT-2E7D32" alt="License" />
+</p>
+
 # SmartWatt Frontend
 
 SmartWatt Frontend is a Next.js application for household energy estimation workflows, including guided data input, appliance-level analytics, and historical dashboard views.
@@ -10,6 +19,14 @@ SmartWatt Frontend is a Next.js application for household energy estimation work
 - Assessment history with dashboard-level exploration.
 - Authentication and persistence integration with Supabase.
 - PDF report generation and what-if simulation display.
+
+## Interface Preview
+
+| Assessment Flow | Dashboard |
+|---|---|
+| <img src="../docs/screenshots/smartwatt-workflow.png" alt="Assessment flow" width="100%" /> | <img src="../docs/screenshots/frontend-dashboard.png" alt="Frontend dashboard" width="100%" /> |
+
+If images are not visible yet, add files in `docs/screenshots/` from the repository root.
 
 ## Technology Stack
 
@@ -63,6 +80,12 @@ npm run dev
 npm run build
 npm run start
 ```
+
+## UX Notes
+
+- The interface supports quick and detailed assessment modes.
+- Data-entry steps are designed for predictable user progression.
+- Result visualizations are optimized for desktop and mobile layouts.
 
 ## Environment
 
