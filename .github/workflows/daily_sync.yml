@@ -37,8 +37,8 @@ jobs:
       - name: Run Frontend Checks
         run: |
           cd Frontend
-          npm install --include=optional
-          npm install --os=linux --cpu=x64 lightningcss || true
+          rm -rf node_modules package-lock.json
+          npm install
           npm run build > ../frontend_status.txt || echo "Frontend build failed" > ../frontend_status.txt
 
       # --- GENERATE STATUS DASHBOARD ---
@@ -65,5 +65,4 @@ jobs:
           git config --local user.name "JishnuPG-tech"
           git add STATUS.md
           git commit -m "chore(ci): update system status dashboard" || exit 0
-          git pull --rebase origin main || true 
-          git push
+          git checkout -- . || true # discard unstaged changes like package-lock.json so rebase works
