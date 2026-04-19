@@ -1,0 +1,29 @@
+name: SmartWatt Daily Sync
+
+on:
+  schedule:
+    # Runs at 12:00 PM UTC every day
+    - cron: '0 12 * * *'
+  workflow_dispatch: # Allows manual triggering from the Actions tab
+
+jobs:
+  daily_update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update SmartWatt system heartbeat
+        run: |
+          echo "SmartWatt Background Sync - Last run: $(date)" > system_heartbeat.log
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add system_heartbeat.log
+          git commit -m "chore: automated daily system heartbeat sync" || exit 0
+          git push
