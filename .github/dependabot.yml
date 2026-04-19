@@ -1,0 +1,19 @@
+version: 2
+updates:
+  # Maintain Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/Backend"
+    schedule:
+      interval: "weekly"
+      
+  # Maintain Frontend dependencies (Next.js)
+  - package-ecosystem: "npm"
+    directory: "/Frontend"
+    schedule:
+      interval: "weekly"
+      
+  # Maintain Mobile dependencies (Expo/React Native)
+  - package-ecosystem: "npm"
+    directory: "/Mobile"
+    schedule:
+      interval: "weekly"
