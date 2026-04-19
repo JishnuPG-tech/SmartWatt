@@ -82,12 +82,12 @@ def test_frontend_to_backend_ac_age():
             "n_occupants": 4,
             "location_type": "urban",
             "season": "summer",
-             transformed_data,
+            **transformed_data,
             "total_kwh_monthly": 300.0,
             "num_ac_units": 1
         }
         
-        validated = ACInput( complete_data)
+        validated = ACInput(**complete_data)
         print(f"   ✅ Validation passed")
         print(f"   ac_age_years: {validated.ac_age_years} (type: {type(validated.ac_age_years).__name__})")
     except Exception as e:
@@ -185,7 +185,7 @@ def test_different_age_categories():
     results = []
     
     for age_value, description in age_categories:
-        test_data = { base_data, "ac_age_years": age_value}
+        test_data = {**base_data, "ac_age_years": age_value}
         
         try:
             result = predictor.predict('ac', [test_data])

@@ -12,7 +12,7 @@ client = TestClient(app)
 def test_health_check():
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {"status": "online", "message": "SmartWatt (Pure AI) is Active"}
+    assert response.json() == {"status": "online", "message": "SmartWatt (Hybrid AI + Physics) is Active"}
 
 def test_calculate_bill_api():
     """Verify bill calculation endpoint"""
