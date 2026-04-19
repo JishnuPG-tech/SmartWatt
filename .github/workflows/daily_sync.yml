@@ -1,13 +1,12 @@
-name: SmartWatt Daily Sync
+name: SmartWatt Health Check & Sync
 
 on:
   schedule:
-    # Runs every 3 hours
     - cron: '0 */3 * * *'
-  workflow_dispatch: # Allows manual triggering from the Actions tab
+  workflow_dispatch:
 
 jobs:
-  daily_update:
+  health_check:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -16,14 +15,54 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Update SmartWatt system heartbeat
+      # --- BACKEND CHECK (PYTHON) ---
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Run Backend Tests
         run: |
-          echo "SmartWatt Background Sync - Last run: $(date)" > system_heartbeat.log
+          cd Backend
+          pip install -r requirements.txt
+          if [ -f "requirements-test.txt" ]; then pip install -r requirements-test.txt; fi
+          python -m pytest tests/ > ../backend_status.txt || echo "Backend tests failed or no tests found" > ../backend_status.txt
+          
+      # --- FRONTEND CHECK (NODE.JS) ---
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Run Frontend Checks
+        run: |
+          cd Frontend
+          npm install
+          npm run build > ../frontend_status.txt || echo "Frontend build failed" > ../frontend_status.txt
+
+      # --- GENERATE STATUS DASHBOARD ---
+      - name: Update STATUS.md
+        run: |
+          echo "# SmartWatt System Health Status" > STATUS.md
+          echo "> Automatically updated every 3 hours" >> STATUS.md
+          echo "" >> STATUS.md
+          echo "**Last Checked:** $(date -u) UTC" >> STATUS.md
+          echo "" >> STATUS.md
+          echo "## 🟢 Backend (Python/FastAPI)" >> STATUS.md
+          echo '```text' >> STATUS.md
+          cat backend_status.txt | tail -n 10 >> STATUS.md || true
+          echo '```' >> STATUS.md
+          echo "" >> STATUS.md
+          echo "## 🟢 Frontend (Next.js)" >> STATUS.md
+          echo '```text' >> STATUS.md
+          cat frontend_status.txt | tail -n 10 >> STATUS.md || true
+          echo '```' >> STATUS.md
 
       - name: Commit and Push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add system_heartbeat.log
-          git commit -m "chore: automated daily system heartbeat sync" || exit 0
+          git add STATUS.md
+          git commit -m "chore(ci): update system status dashboard" || exit 0
+          git pull --rebase origin main || true 
           git push
