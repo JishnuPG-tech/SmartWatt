@@ -59,7 +59,6 @@ def test_frontend_transformation():
     print("✅ UI data format defined")
     print("✅ Expected backend format defined")
     print("✅ Transformation logic verified")
-    return True
 
 
 def test_backend_schema_validation():
@@ -82,7 +81,7 @@ def test_backend_schema_validation():
             "ac_usage_pattern": "moderate",
             "ac_hours_per_day": 8,
         }
-        ac_input = ACInput(ac_data)
+        ac_input = ACInput(**ac_data)
         print(
             f"✅ AC schema validation passed: {ac_input.ac_star_rating}-star, {ac_input.ac_tonnage} ton"
         )
@@ -98,7 +97,7 @@ def test_backend_schema_validation():
             "fridge_type": "frost_free",
             "fridge_hours_per_day": 24,
         }
-        fridge_input = FridgeInput(fridge_data)
+        fridge_input = FridgeInput(**fridge_data)
         print(
             f"✅ Fridge schema validation passed: {fridge_input.fridge_capacity_liters}L, {fridge_input.fridge_star_rating}-star"
         )
@@ -113,16 +112,15 @@ def test_backend_schema_validation():
             "wm_type": "front_load",
             "wm_cycles_per_week": 7,
         }
-        wm_input = WashingMachineInput(wm_data)
+        wm_input = WashingMachineInput(**wm_data)
         print(
             f"✅ WM schema validation passed: {wm_input.wm_capacity_kg}kg, {wm_input.wm_star_rating}-star"
         )
 
-        return True
 
     except Exception as e:
         print(f"❌ Schema validation failed: {e}")
-        return False
+        assert False
 
 
 def test_field_mapping():
@@ -168,7 +166,7 @@ def test_field_mapping():
 
     except Exception as e:
         print(f"❌ Field mapping failed: {e}")
-        return False
+        assert False
 
 
 def test_training_columns():
@@ -224,7 +222,7 @@ def test_training_columns():
 
     except Exception as e:
         print(f"❌ Training columns check failed: {e}")
-        return False
+        assert False
 
 
 def test_prediction_pipeline():
@@ -253,7 +251,7 @@ def test_prediction_pipeline():
             print(f"  ✅ AC prediction successful: {result['prediction']:.2f} kWh")
         else:
             print(f"  ❌ AC prediction failed: {result}")
-            return False
+            assert False
 
         # Test Fridge prediction
         fridge_details = {
@@ -273,16 +271,15 @@ def test_prediction_pipeline():
             print(f"  ✅ Fridge prediction successful: {result['prediction']:.2f} kWh")
         else:
             print(f"  ❌ Fridge prediction failed: {result}")
-            return False
+            assert False
 
-        return True
 
     except Exception as e:
         print(f"❌ Prediction pipeline failed: {e}")
         import traceback
 
         traceback.print_exc()
-        return False
+        assert False
 
 
 def print_summary(results):

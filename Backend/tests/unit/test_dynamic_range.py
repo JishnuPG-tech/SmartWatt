@@ -53,7 +53,7 @@ def test_dynamic_range_resolution():
         print(f"   Expected: Higher consumption (age biased toward 5.0)")
     except Exception as e:
         print(f"❌ Error: {e}")
-        return False
+        assert False
 
     # Scenario 2: Light Usage (should bias toward lower age = less wear)
     print("\n2️⃣ LIGHT USAGE CONTEXT")
@@ -88,7 +88,7 @@ def test_dynamic_range_resolution():
         print(f"   Expected: Lower consumption (age biased toward 3.0)")
     except Exception as e:
         print(f"❌ Error: {e}")
-        return False
+        assert False
 
     # Comparison
     print("\n3️⃣ COMPARISON: DYNAMIC vs STATIC")
@@ -147,7 +147,6 @@ def test_dynamic_range_resolution():
     print("AI-BASED RANGE RESOLUTION TEST COMPLETE")
     print("=" * 80)
 
-    return True
 
 
 def test_schema_validation():
