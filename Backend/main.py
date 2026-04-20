@@ -12,6 +12,7 @@ from routers import appliances
 # Initialize App & Predictor
 predictor = get_predictor()
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Load all AI models on server startup to ensure fast first responses"""
@@ -25,6 +26,7 @@ async def lifespan(app: FastAPI):
     print("=" * 50 + "\n")
 
     yield
+
 
 app = FastAPI(title="SmartWatt AI Backend", lifespan=lifespan)
 # Explicitly initialize predictor here to ensure singleton is warm,
@@ -41,8 +43,6 @@ app.add_middleware(
 
 # Include Routers
 app.include_router(appliances.router)
-
-
 
 
 @app.get("/health")
