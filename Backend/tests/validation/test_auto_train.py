@@ -7,7 +7,9 @@ import pandas as pd
 import pytest
 
 # Add parent to path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.append(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 # Import the module to be tested
 from train import train_appliance_model
