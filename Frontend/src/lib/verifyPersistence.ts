@@ -1,3 +1,5 @@
+'use server';
+
 import fs from "fs";
 import path from "path";
 
@@ -101,5 +103,3 @@ async function verifyPersistence() {
   // Cleanup (Optional)
   // await supabase.from("smartwatt_training").delete().eq("id", trainingId);
 }
-
-verifyPersistence();
