@@ -40,7 +40,6 @@ async def lifespan(app: FastAPI):
     print("      READY TO SERVE PREDICTIONS")
     print("=" * 50 + "\n")
 
-
     yield
 
 
