@@ -51,12 +51,12 @@ jobs:
           echo "" >> STATUS.md
           echo "## 🟢 Backend (Python/FastAPI)" >> STATUS.md
           echo '```text' >> STATUS.md
-          cat backend_status.txt | tail -n 10 >> STATUS.md || true
+          cat backend_status.txt | tail -n 100 >> STATUS.md || true
           echo '```' >> STATUS.md
           echo "" >> STATUS.md
           echo "## 🟢 Frontend (Next.js)" >> STATUS.md
           echo '```text' >> STATUS.md
-          cat frontend_status.txt | tail -n 10 >> STATUS.md || true
+          cat frontend_status.txt | tail -n 50 >> STATUS.md || true
           echo '```' >> STATUS.md
 
       - name: Commit and Push changes
