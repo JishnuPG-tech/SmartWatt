@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 "use server";
 
 import fs from "fs";
@@ -29,6 +30,16 @@ export async function verifyPersistence() {
   const { loadTraining } = await import("./api/loadTraining");
 
   // console.log("🚀 Starting Persistence Verification...");
+=======
+'use server';
+
+import { supabase } from './supabaseClient';
+import { saveTraining } from './api/saveTraining';
+import { loadTraining } from './api/loadTraining';
+
+export async function verifyPersistence() {
+    // console.log("🚀 Starting Persistence Verification...");
+>>>>>>> Stashed changes
 
   // 1. Simulate a User ID (or use a test one)
   const TEST_USER_ID = crypto.randomUUID();
