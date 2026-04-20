@@ -26,7 +26,7 @@ jobs:
           cd Backend
           pip install -r requirements.txt
           if [ -f "requirements-test.txt" ]; then pip install -r requirements-test.txt; fi
-          python -m pytest tests/ > ../backend_status.txt || echo "Backend tests failed or no tests found" > ../backend_status.txt
+          python -m pytest tests/ > ../backend_status.txt 2>&1 || echo "⚠️ Backend tests failed." >> ../backend_status.txt
           
       # --- FRONTEND CHECK (NODE.JS) ---
       - name: Set up Node.js
