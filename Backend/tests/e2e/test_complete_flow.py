@@ -117,7 +117,6 @@ def test_backend_schema_validation():
             f"✅ WM schema validation passed: {wm_input.wm_capacity_kg}kg, {wm_input.wm_star_rating}-star"
         )
 
-
     except Exception as e:
         print(f"❌ Schema validation failed: {e}")
         assert False
@@ -272,7 +271,6 @@ def test_prediction_pipeline():
         else:
             print(f"  ❌ Fridge prediction failed: {result}")
             assert False
-
 
     except Exception as e:
         print(f"❌ Prediction pipeline failed: {e}")

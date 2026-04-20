@@ -148,7 +148,6 @@ def test_dynamic_range_resolution():
     print("=" * 80)
 
 
-
 def test_schema_validation():
     """Test that schema accepts both string ranges and numeric values"""
     print("\n" + "=" * 80)
