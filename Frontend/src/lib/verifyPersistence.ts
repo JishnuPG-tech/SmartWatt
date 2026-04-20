@@ -3,7 +3,7 @@
 import fs from "fs";
 import path from "path";
 
-async function verifyPersistence() {
+export async function verifyPersistence() {
   // Load .env.local manually
   const envPath = path.resolve(__dirname, "../../.env.local");
   if (fs.existsSync(envPath)) {
