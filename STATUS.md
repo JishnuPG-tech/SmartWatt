@@ -1,7 +1,7 @@
 # SmartWatt System Health Status
 > Automatically updated every 3 hours
 
-**Last Checked:** Mon Apr 20 05:42:01 UTC 2026 UTC
+**Last Checked:** Mon Apr 20 05:53:01 UTC 2026 UTC
 
 ## 🟢 Backend (Python/FastAPI)
 ```text
@@ -9,20 +9,20 @@
 platform linux -- Python 3.10.20, pytest-9.0.3, pluggy-1.6.0
 rootdir: /home/runner/work/SmartWatt/SmartWatt/Backend
 plugins: anyio-4.13.0
-collected 34 items / 1 error
+collected 36 items
 
-==================================== ERRORS ====================================
-_____________ ERROR collecting tests/validation/test_auto_train.py _____________
-ImportError while importing test module '/home/runner/work/SmartWatt/SmartWatt/Backend/tests/validation/test_auto_train.py'.
-Hint: make sure your test modules/packages have valid Python names.
-Traceback:
-/opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/importlib/__init__.py:126: in import_module
-    return _bootstrap._gcd_import(name[level:], package, level)
-tests/validation/test_auto_train.py:13: in <module>
-    from train import train_appliance_model
-train.py:10: in <module>
-    import matplotlib.pyplot as plt
-E   ModuleNotFoundError: No module named 'matplotlib'
+tests/e2e/test_ac_age_flow.py ...                                        [  8%]
+tests/e2e/test_complete_flow.py .....                                    [ 22%]
+tests/e2e/test_e2e_ac_age.py ..                                          [ 27%]
+tests/integration/test_api.py .....                                      [ 41%]
+tests/integration/test_backend_reception.py .                            [ 44%]
+tests/unit/test_all_ranges.py .                                          [ 47%]
+tests/unit/test_anomaly.py .                                             [ 50%]
+tests/unit/test_dynamic_range.py ..                                      [ 55%]
+tests/unit/test_edge_cases.py ........                                   [ 77%]
+tests/unit/test_logic.py ......                                          [ 94%]
+tests/validation/test_auto_train.py ..                                   [100%]
+
 =============================== warnings summary ===============================
 main.py:30
   /home/runner/work/SmartWatt/SmartWatt/Backend/main.py:30: DeprecationWarning: 
@@ -42,12 +42,44 @@ main.py:30
           
     return self.router.on_event(event_type)
 
+tests/e2e/test_complete_flow.py::test_frontend_transformation
+  /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/python.py:170: PytestReturnNotNoneWarning: Test functions should return None, but tests/e2e/test_complete_flow.py::test_frontend_transformation returned <class 'bool'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/e2e/test_complete_flow.py::test_backend_schema_validation
+  /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/python.py:170: PytestReturnNotNoneWarning: Test functions should return None, but tests/e2e/test_complete_flow.py::test_backend_schema_validation returned <class 'bool'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/e2e/test_complete_flow.py::test_field_mapping
+  /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/python.py:170: PytestReturnNotNoneWarning: Test functions should return None, but tests/e2e/test_complete_flow.py::test_field_mapping returned <class 'bool'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/e2e/test_complete_flow.py::test_training_columns
+  /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/python.py:170: PytestReturnNotNoneWarning: Test functions should return None, but tests/e2e/test_complete_flow.py::test_training_columns returned <class 'bool'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/e2e/test_complete_flow.py::test_prediction_pipeline
+  /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/python.py:170: PytestReturnNotNoneWarning: Test functions should return None, but tests/e2e/test_complete_flow.py::test_prediction_pipeline returned <class 'bool'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/unit/test_dynamic_range.py::test_dynamic_range_resolution
+  /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/python.py:170: PytestReturnNotNoneWarning: Test functions should return None, but tests/unit/test_dynamic_range.py::test_dynamic_range_resolution returned <class 'bool'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-=========================== short test summary info ============================
-ERROR tests/validation/test_auto_train.py
-!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
-========================= 2 warnings, 1 error in 6.73s =========================
-⚠️ Backend tests failed.
+======================= 36 passed, 8 warnings in 12.00s ========================
 ```
 
 ## 🟢 Frontend (Next.js)
@@ -65,7 +97,7 @@ https://nextjs.org/telemetry
    ▲ Next.js 16.0.10 (Turbopack)
 
    Creating an optimized production build ...
- ✓ Compiled successfully in 20.6s
+ ✓ Compiled successfully in 21.7s
    Running TypeScript ...
    Collecting page data using 3 workers ...
    Generating static pages using 3 workers (0/7) ...
@@ -73,7 +105,7 @@ https://nextjs.org/telemetry
    Generating static pages using 3 workers (1/7) 
    Generating static pages using 3 workers (3/7) 
    Generating static pages using 3 workers (5/7) 
- ✓ Generating static pages using 3 workers (7/7) in 598.2ms
+ ✓ Generating static pages using 3 workers (7/7) in 573.5ms
    Finalizing page optimization ...
 
 Route (app)
