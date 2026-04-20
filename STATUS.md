@@ -1,7 +1,7 @@
 # SmartWatt System Health Status
 > Automatically updated every 3 hours
 
-**Last Checked:** Mon Apr 20 05:53:01 UTC 2026 UTC
+**Last Checked:** Mon Apr 20 06:35:18 UTC 2026 UTC
 
 ## 🟢 Backend (Python/FastAPI)
 ```text
@@ -42,18 +42,6 @@ main.py:30
           
     return self.router.on_event(event_type)
 
-tests/e2e/test_complete_flow.py::test_frontend_transformation
-  /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/python.py:170: PytestReturnNotNoneWarning: Test functions should return None, but tests/e2e/test_complete_flow.py::test_frontend_transformation returned <class 'bool'>.
-  Did you mean to use `assert` instead of `return`?
-  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
-    warnings.warn(
-
-tests/e2e/test_complete_flow.py::test_backend_schema_validation
-  /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/python.py:170: PytestReturnNotNoneWarning: Test functions should return None, but tests/e2e/test_complete_flow.py::test_backend_schema_validation returned <class 'bool'>.
-  Did you mean to use `assert` instead of `return`?
-  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
-    warnings.warn(
-
 tests/e2e/test_complete_flow.py::test_field_mapping
   /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/python.py:170: PytestReturnNotNoneWarning: Test functions should return None, but tests/e2e/test_complete_flow.py::test_field_mapping returned <class 'bool'>.
   Did you mean to use `assert` instead of `return`?
@@ -66,20 +54,8 @@ tests/e2e/test_complete_flow.py::test_training_columns
   See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
     warnings.warn(
 
-tests/e2e/test_complete_flow.py::test_prediction_pipeline
-  /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/python.py:170: PytestReturnNotNoneWarning: Test functions should return None, but tests/e2e/test_complete_flow.py::test_prediction_pipeline returned <class 'bool'>.
-  Did you mean to use `assert` instead of `return`?
-  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
-    warnings.warn(
-
-tests/unit/test_dynamic_range.py::test_dynamic_range_resolution
-  /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/python.py:170: PytestReturnNotNoneWarning: Test functions should return None, but tests/unit/test_dynamic_range.py::test_dynamic_range_resolution returned <class 'bool'>.
-  Did you mean to use `assert` instead of `return`?
-  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
-    warnings.warn(
-
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======================= 36 passed, 8 warnings in 12.00s ========================
+======================= 36 passed, 4 warnings in 12.55s ========================
 ```
 
 ## 🟢 Frontend (Next.js)
@@ -97,7 +73,7 @@ https://nextjs.org/telemetry
    ▲ Next.js 16.0.10 (Turbopack)
 
    Creating an optimized production build ...
- ✓ Compiled successfully in 21.7s
+ ✓ Compiled successfully in 20.8s
    Running TypeScript ...
    Collecting page data using 3 workers ...
    Generating static pages using 3 workers (0/7) ...
@@ -105,7 +81,7 @@ https://nextjs.org/telemetry
    Generating static pages using 3 workers (1/7) 
    Generating static pages using 3 workers (3/7) 
    Generating static pages using 3 workers (5/7) 
- ✓ Generating static pages using 3 workers (7/7) in 573.5ms
+ ✓ Generating static pages using 3 workers (7/7) in 549.8ms
    Finalizing page optimization ...
 
 Route (app)
