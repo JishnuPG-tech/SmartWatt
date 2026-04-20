@@ -1,26 +1,24 @@
-import os
-import sys
-import subprocess
 import datetime
+import os
+import subprocess
+import sys
 import webbrowser
+
 
 def run_command(command, cwd=None):
     """Run command and capture output"""
     try:
         result = subprocess.run(
-            command, 
-            cwd=cwd, 
-            capture_output=True, 
-            text=True, 
-            check=False
+            command, cwd=cwd, capture_output=True, text=True, check=False
         )
         return result
     except Exception as e:
         return str(e)
 
+
 def generate_html_report(results):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
+
     html = f"""
     <!DOCTYPE html>
     <html>
@@ -141,16 +139,17 @@ def generate_html_report(results):
     </body>
     </html>
     """
-    
-    report_path = os.path.join(os.path.dirname(__file__), 'qa_report.html')
+
+    report_path = os.path.join(os.path.dirname(__file__), "qa_report.html")
     with open(report_path, "w", encoding="utf-8") as f:
         f.write(html)
-    
+
     return report_path
+
 
 def main():
     print("🚀 Initializing Master QA Sequence...")
-    
+
     base_dir = os.path.dirname(os.path.abspath(__file__))
     backend_dir = base_dir
 
@@ -158,57 +157,68 @@ def main():
 
     # 1. Run Logic Unit Tests
     print("🔬 Running Unit Tests...")
-    logic_res = run_command([sys.executable, "-m", "pytest", "tests/test_logic.py"], cwd=backend_dir)
-    results['backend_logic'] = {
-        'success': logic_res.returncode == 0,
-        'output': logic_res.stdout + "\n" + logic_res.stderr
+    logic_res = run_command(
+        [sys.executable, "-m", "pytest", "tests/test_logic.py"], cwd=backend_dir
+    )
+    results["backend_logic"] = {
+        "success": logic_res.returncode == 0,
+        "output": logic_res.stdout + "\n" + logic_res.stderr,
     }
 
     # 2. Run API Tests
     print("🔌 Running Integration Tests...")
     # Requires backend to be importable, usually pytest handles this efficiently
-    api_res = run_command([sys.executable, "-m", "pytest", "tests/test_api.py"], cwd=backend_dir)
-    results['api'] = {
-        'success': api_res.returncode == 0,
-        'output': api_res.stdout + "\n" + api_res.stderr
+    api_res = run_command(
+        [sys.executable, "-m", "pytest", "tests/test_api.py"], cwd=backend_dir
+    )
+    results["api"] = {
+        "success": api_res.returncode == 0,
+        "output": api_res.stdout + "\n" + api_res.stderr,
     }
 
     # 2.5 Run Edge Case Tests
     print("⚠️ Running Edge Case Tests...")
-    edge_res = run_command([sys.executable, "-m", "pytest", "tests/test_edge_cases.py"], cwd=backend_dir)
-    results['edge_cases'] = {
-        'success': edge_res.returncode == 0,
-        'output': edge_res.stdout + "\n" + edge_res.stderr
+    edge_res = run_command(
+        [sys.executable, "-m", "pytest", "tests/test_edge_cases.py"], cwd=backend_dir
+    )
+    results["edge_cases"] = {
+        "success": edge_res.returncode == 0,
+        "output": edge_res.stdout + "\n" + edge_res.stderr,
     }
 
     # 2.6 Run Auto-Train Logic Test
     print("🤖 Running Auto-Train Pipeline Verification...")
-    train_res = run_command([sys.executable, "-m", "pytest", "tests/test_auto_train.py"], cwd=backend_dir)
-    results['auto_train'] = {
-        'success': train_res.returncode == 0,
-        'output': train_res.stdout + "\n" + train_res.stderr
+    train_res = run_command(
+        [sys.executable, "-m", "pytest", "tests/test_auto_train.py"], cwd=backend_dir
+    )
+    results["auto_train"] = {
+        "success": train_res.returncode == 0,
+        "output": train_res.stdout + "\n" + train_res.stderr,
     }
 
     # 3. Run Regression
     print("📉 Running Regression Engine...")
-    reg_res = run_command([sys.executable, "tests/compare_predictions.py"], cwd=backend_dir)
-    results['regression'] = {
-        'success': reg_res.returncode == 0,
-        'output': reg_res.stdout + "\n" + reg_res.stderr
+    reg_res = run_command(
+        [sys.executable, "tests/compare_predictions.py"], cwd=backend_dir
+    )
+    results["regression"] = {
+        "success": reg_res.returncode == 0,
+        "output": reg_res.stdout + "\n" + reg_res.stderr,
     }
 
     # Generate Report
     print("📝 Generating Report...")
     report_file = generate_html_report(results)
-    
+
     print(f"\n✅ QA Sequence Complete!")
     print(f"📄 Report generated at: {report_file}")
-    
+
     # Try to open
     try:
-        webbrowser.open('file://' + report_file)
+        webbrowser.open("file://" + report_file)
     except:
         pass
+
 
 if __name__ == "__main__":
     main()

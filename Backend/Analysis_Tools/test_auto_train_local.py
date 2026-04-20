@@ -9,12 +9,13 @@ Workflow:
 2. TRAIN: Teach the AI models using this fresh data.
 3. DEPLOY: Save the brain files (.keras) so the backend can use them.
 
-Why? 
+Why?
 Because static AI gets stale. We want an AI that can learn from new physics rules instantly.
 """
 
 import os
 import sys
+
 from dotenv import load_dotenv
 from supabase import create_client
 
@@ -23,7 +24,7 @@ load_dotenv()
 
 
 # Add parent directory to path to import backend modules
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 try:
     import newdataset
@@ -33,10 +34,11 @@ except ImportError as e:
     print("Ensure you are running this from the Backend/ root directory.")
     sys.exit(1)
 
+
 def run_pipeline():
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print(" 🚀 SMARTWATT : AUTO-TRAIN PIPELINE STARTING")
-    print("="*60)
+    print("=" * 60)
 
     # --- STEP 0: CHECK REAL WORLD DATA (Gatekeeper) ---
     # We only want to burn compute if we have enough real user data to matter.
@@ -44,28 +46,33 @@ def run_pipeline():
     try:
         url = os.environ.get("SUPABASE_URL")
         key = os.environ.get("SUPABASE_KEY")
-        
+
         if not url or not key:
             print("⚠️ Skipped Supabase Check: Missing credentials.")
         else:
             print("\n[Step 0/2] Checking Real World Data Maturity...")
             supabase = create_client(url, key)
             # Count entries (head=True is efficient, doesn't fetch body)
-            count = supabase.table('smartwatt_training').select("*", count='exact', head=True).execute().count
-            
+            count = (
+                supabase.table("smartwatt_training")
+                .select("*", count="exact", head=True)
+                .execute()
+                .count
+            )
+
             print(f"   📊 Found {count} real user entries in Database.")
-            
+
             if count < 10:
                 print(f"   🛑 HALTING: Not enough data ({count}/10).")
                 print("   The AI refuses to learn from an empty world.")
                 print("   Come back when you have at least 10 entries.")
                 return
             else:
-                 print("   ✅ PROCEEDING: Data maturity threshold met.")
+                print("   ✅ PROCEEDING: Data maturity threshold met.")
 
     except Exception as e:
         print(f"⚠️ Supabase Check Warning: {e}")
-        # We don't stop strictly on error, unless user wants strict mode. 
+        # We don't stop strictly on error, unless user wants strict mode.
         # But user said "only train if...", so maybe we SHOULD return on error?
         # User said "only train if supabase contain minimum 10 entries".
         # If we can't verify, we can't be sure. Safe default is to Proceed?
@@ -79,12 +86,12 @@ def run_pipeline():
     try:
         sim = newdataset.KeralaRealWorldSimulator()
         df = sim.generate()
-        
+
         # Save to root directory
-        csv_path = 'kerala_smartwatt_ai.csv'
+        csv_path = "kerala_smartwatt_ai.csv"
         df.to_csv(csv_path, index=False)
         print(f"   ✅ New Dataset Generated: {csv_path} ({len(df)} samples)")
-        
+
     except Exception as e:
         print(f"   ❌ Data Generation Failed: {e}")
         return
@@ -98,9 +105,10 @@ def run_pipeline():
         print(f"   ❌ Training Failed: {e}")
         return
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print(" ✅ PIPELINE COMPLETE: AI IS NOW SMARTER!")
-    print("="*60)
+    print("=" * 60)
+
 
 """
 --- LEGACY V1 SUPABASE SNIPPET (ARCHIVED) ---

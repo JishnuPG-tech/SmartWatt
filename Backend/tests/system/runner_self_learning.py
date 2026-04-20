@@ -6,6 +6,7 @@ Uses local CSV dataset instead of Supabase
 import os
 import sys
 
+
 def main():
     # Temporarily modify auto_train to use local CSV
     print("=" * 70)
@@ -15,9 +16,9 @@ def main():
 
     # Check if local dataset exists
     dataset_files = [
-        'kerala_smartwatt_ai.csv',
-        'kerala_realworld_dataset.csv',
-        '../kerala_smartwatt_ai.csv'
+        "kerala_smartwatt_ai.csv",
+        "kerala_realworld_dataset.csv",
+        "../kerala_smartwatt_ai.csv",
     ]
 
     dataset_found = None
@@ -42,18 +43,21 @@ def main():
     print("📝 Creating test_auto_train_local.py...")
 
     # Add backend root to path
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+    sys.path.append(
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
+    )
 
     # Load auto_train from dev_tools
-    AUTO_TRAIN_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../dev_tools/auto_train.py'))
+    AUTO_TRAIN_PATH = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "../../dev_tools/auto_train.py")
+    )
 
-    with open(AUTO_TRAIN_PATH, 'r', encoding='utf-8') as f:
+    with open(AUTO_TRAIN_PATH, "r", encoding="utf-8") as f:
         content = f.read()
 
     # Replace Supabase fetch with local CSV read
     modified = content.replace(
-        'def fetch_training_data():',
-        '''def fetch_training_data_original():'''
+        "def fetch_training_data():", """def fetch_training_data_original():"""
     )
 
     # Add new fetch function that reads from CSV
@@ -88,12 +92,17 @@ def fetch_training_data():
 '''
 
     # Insert the new function after imports
-    import_section_end = modified.find('# Training History File')
+    import_section_end = modified.find("# Training History File")
     if import_section_end != -1:
-        modified = modified[:import_section_end] + local_fetch + '\n' + modified[import_section_end:]
+        modified = (
+            modified[:import_section_end]
+            + local_fetch
+            + "\n"
+            + modified[import_section_end:]
+        )
 
     # Write modified version
-    with open('test_auto_train_local.py', 'w', encoding='utf-8') as f:
+    with open("test_auto_train_local.py", "w", encoding="utf-8") as f:
         f.write(modified)
 
     print("✅ Created test_auto_train_local.py")
@@ -105,10 +114,13 @@ def fetch_training_data():
 
     # Run the test version
     import subprocess
-    result = subprocess.run([sys.executable, 'test_auto_train_local.py'], 
-                           capture_output=False, text=True)
+
+    result = subprocess.run(
+        [sys.executable, "test_auto_train_local.py"], capture_output=False, text=True
+    )
 
     sys.exit(result.returncode)
+
 
 if __name__ == "__main__":
     main()

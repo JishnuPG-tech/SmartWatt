@@ -13,26 +13,39 @@ print("-" * 80)
 
 try:
     import os
+
     transform_file = "c:/Users/JISHNU PG/Videos/AI/React(Project)/Frontend/src/lib/transformFields.ts"
-    
+
     if os.path.exists(transform_file):
         print("[OK] transformFields.ts exists")
-        
-        with open(transform_file, 'r', encoding='utf-8') as f:
+
+        with open(transform_file, "r", encoding="utf-8") as f:
             content = f.read()
-            
+
         # Check key transformations
         checks = [
             ("ac_star -> ac_star_rating", "'ac_star': 'ac_star_rating'" in content),
-            ("fridge_capacity -> fridge_capacity_liters", "'fridge_capacity': 'fridge_capacity_liters'" in content),
+            (
+                "fridge_capacity -> fridge_capacity_liters",
+                "'fridge_capacity': 'fridge_capacity_liters'" in content,
+            ),
             ("wm_star -> wm_star_rating", "'wm_star': 'wm_star_rating'" in content),
-            ("geyser_type -> water_heater_type", "'geyser_type': 'water_heater_type'" in content),
-            ("transformApplianceData function", "export function transformApplianceData" in content),
-            ("Star rating conversion", "star_rating" in content and "parseInt" in content),
+            (
+                "geyser_type -> water_heater_type",
+                "'geyser_type': 'water_heater_type'" in content,
+            ),
+            (
+                "transformApplianceData function",
+                "export function transformApplianceData" in content,
+            ),
+            (
+                "Star rating conversion",
+                "star_rating" in content and "parseInt" in content,
+            ),
             ("Pattern derivation", "deriveFieldsFromPattern" in content),
-            ("WM cycles derivation", "wm_cycles_per_week" in content)
+            ("WM cycles derivation", "wm_cycles_per_week" in content),
         ]
-        
+
         for desc, result in checks:
             status = "[OK]" if result else "[FAIL]"
             print(f"  {status} {desc}")
@@ -47,20 +60,32 @@ print("-" * 80)
 
 try:
     predictions_file = "c:/Users/JISHNU PG/Videos/AI/React(Project)/Frontend/src/lib/api/predictions.ts"
-    
+
     if os.path.exists(predictions_file):
         print("[OK] predictions.ts exists")
-        
-        with open(predictions_file, 'r', encoding='utf-8') as f:
+
+        with open(predictions_file, "r", encoding="utf-8") as f:
             content = f.read()
-        
+
         checks = [
-            ("Import transformApplianceData", "import { transformApplianceData }" in content),
-            ("predictAppliance transforms data", "transformApplianceData(name, details)" in content),
-            ("simulateSavings transforms data", "transformApplianceData(key, value)" in content),
-            ("predictAllAppliances transforms data", "transformApplianceData(req.appliance_name" in content)
+            (
+                "Import transformApplianceData",
+                "import { transformApplianceData }" in content,
+            ),
+            (
+                "predictAppliance transforms data",
+                "transformApplianceData(name, details)" in content,
+            ),
+            (
+                "simulateSavings transforms data",
+                "transformApplianceData(key, value)" in content,
+            ),
+            (
+                "predictAllAppliances transforms data",
+                "transformApplianceData(req.appliance_name" in content,
+            ),
         ]
-        
+
         for desc, result in checks:
             status = "[OK]" if result else "[FAIL]"
             print(f"  {status} {desc}")
@@ -75,14 +100,15 @@ print("-" * 80)
 
 try:
     from pathlib import Path
+
     backend_schemas = Path("schemas.py")
-    
+
     if backend_schemas.exists():
         print("[OK] schemas.py exists")
-        
-        with open(backend_schemas, 'r') as f:
+
+        with open(backend_schemas, "r") as f:
             content = f.read()
-        
+
         checks = [
             ("ACInput schema", "class ACInput" in content),
             ("ac_star_rating field", "ac_star_rating" in content),
@@ -90,9 +116,12 @@ try:
             ("fridge_capacity_liters field", "fridge_capacity_liters" in content),
             ("WashingMachineInput schema", "class WashingMachineInput" in content),
             ("wm_cycles_per_week field", "wm_cycles_per_week" in content),
-            ("Base fields", "BaseApplianceInput" in content and "location_type" in content)
+            (
+                "Base fields",
+                "BaseApplianceInput" in content and "location_type" in content,
+            ),
         ]
-        
+
         for desc, result in checks:
             status = "[OK]" if result else "[FAIL]"
             print(f"  {status} {desc}")
@@ -107,25 +136,32 @@ print("-" * 80)
 
 try:
     from pathlib import Path
+
     train_file = Path("train.py")
-    
+
     if train_file.exists():
         print("[OK] train.py exists")
-        
-        with open(train_file, 'r') as f:
+
+        with open(train_file, "r") as f:
             content = f.read()
-        
+
         # Check if training uses updated features
         checks = [
             ("AC uses season", "'season'" in content and "'ac'" in content),
-            ("AC uses location_type", "'location_type'" in content and "'ac'" in content),
+            (
+                "AC uses location_type",
+                "'location_type'" in content and "'ac'" in content,
+            ),
             ("AC uses ac_star_rating", "'ac_star_rating'" in content),
             ("Fridge uses season", "'season'" in content and "'fridge'" in content),
             ("WM uses wm_cycles_per_week", "'wm_cycles_per_week'" in content),
             ("Water heater uses type", "'water_heater_type'" in content),
-            ("All base fields present", content.count("'n_occupants'") > 10 and content.count("'season'") > 10)
+            (
+                "All base fields present",
+                content.count("'n_occupants'") > 10 and content.count("'season'") > 10,
+            ),
         ]
-        
+
         for desc, result in checks:
             status = "[OK]" if result else "[FAIL]"
             print(f"  {status} {desc}")
@@ -140,30 +176,47 @@ print("-" * 80)
 
 try:
     import pandas as pd
-    df = pd.read_csv('kerala_smartwatt_ai.csv')
-    
+
+    df = pd.read_csv("kerala_smartwatt_ai.csv")
+
     print(f"[OK] Dataset loaded: {len(df)} rows, {len(df.columns)} columns")
-    
+
     required_cols = [
-        'n_occupants', 'season', 'location_type',
-        'ac_star_rating', 'ac_tonnage', 'ac_type', 'ac_usage_pattern',
-        'fridge_capacity', 'fridge_age', 'fridge_star_rating', 'fridge_type',
-        'wm_type', 'wm_capacity', 'wm_star_rating', 'wm_cycles_per_week',
-        'water_heater_type', 'water_heater_capacity',
-        'water_pump_hp', 'television_type', 'tv_size', 'fan_type', 'num_fans'
+        "n_occupants",
+        "season",
+        "location_type",
+        "ac_star_rating",
+        "ac_tonnage",
+        "ac_type",
+        "ac_usage_pattern",
+        "fridge_capacity",
+        "fridge_age",
+        "fridge_star_rating",
+        "fridge_type",
+        "wm_type",
+        "wm_capacity",
+        "wm_star_rating",
+        "wm_cycles_per_week",
+        "water_heater_type",
+        "water_heater_capacity",
+        "water_pump_hp",
+        "television_type",
+        "tv_size",
+        "fan_type",
+        "num_fans",
     ]
-    
+
     missing = [col for col in required_cols if col not in df.columns]
-    
+
     if not missing:
         print("[OK] All required columns present")
     else:
         print(f"[FAIL] Missing columns: {missing}")
-    
+
     # Check data distribution
     print(f"\n  Season distribution: {df['season'].value_counts().to_dict()}")
     print(f"  Location distribution: {df['location_type'].value_counts().to_dict()}")
-    
+
 except Exception as e:
     print(f"[ERROR] {e}")
 

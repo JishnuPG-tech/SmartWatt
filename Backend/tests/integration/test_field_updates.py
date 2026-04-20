@@ -3,17 +3,18 @@ Test script to validate the new UI field updates work correctly
 Tests: ac_usage_pattern, num_fans, wm_cycles_per_week
 """
 
-print("\n" + "="*60)
+print("\n" + "=" * 60)
 print("FIELD UPDATE VALIDATION TEST")
-print("="*60)
+print("=" * 60)
 
 # Test 1: Verify dataset has the required columns
 print("\n[TEST 1] Dataset Column Check")
 print("-" * 60)
 import pandas as pd
-df = pd.read_csv('kerala_smartwatt_ai.csv')
 
-required_cols = ['ac_usage_pattern', 'num_fans', 'wm_cycles_per_week']
+df = pd.read_csv("kerala_smartwatt_ai.csv")
+
+required_cols = ["ac_usage_pattern", "num_fans", "wm_cycles_per_week"]
 for col in required_cols:
     if col in df.columns:
         print(f"✅ {col}: Found in dataset")
@@ -24,13 +25,14 @@ for col in required_cols:
 # Test 2: Verify train.py uses these fields
 print("\n[TEST 2] Training Feature Usage Check")
 print("-" * 60)
-with open('train.py', 'r', encoding='utf-8') as f:
+with open("train.py", "r", encoding="utf-8") as f:
     train_content = f.read()
-    
+
 checks = {
-    'ac_usage_pattern': 'ac' in train_content and 'ac_usage_pattern' in train_content,
-    'num_fans': 'ceiling_fan' in train_content and 'num_fans' in train_content,
-    'wm_cycles_per_week': 'washing_machine' in train_content and 'wm_cycles_per_week' in train_content
+    "ac_usage_pattern": "ac" in train_content and "ac_usage_pattern" in train_content,
+    "num_fans": "ceiling_fan" in train_content and "num_fans" in train_content,
+    "wm_cycles_per_week": "washing_machine" in train_content
+    and "wm_cycles_per_week" in train_content,
 }
 
 for field, found in checks.items():
@@ -42,13 +44,13 @@ for field, found in checks.items():
 # Test 3: Verify backend schemas accept these fields
 print("\n[TEST 3] Backend Schema Check")
 print("-" * 60)
-with open('schemas.py', 'r', encoding='utf-8') as f:
+with open("schemas.py", "r", encoding="utf-8") as f:
     schema_content = f.read()
 
 schema_checks = {
-    'ac_usage_pattern': 'ac_usage_pattern' in schema_content,
-    'num_ceiling_fans': 'num_ceiling_fans' in schema_content,
-    'wm_cycles_per_week': 'wm_cycles_per_week' in schema_content
+    "ac_usage_pattern": "ac_usage_pattern" in schema_content,
+    "num_ceiling_fans": "num_ceiling_fans" in schema_content,
+    "wm_cycles_per_week": "wm_cycles_per_week" in schema_content,
 }
 
 for field, found in schema_checks.items():
@@ -62,11 +64,11 @@ print("\n[TEST 4] Prediction Engine Test")
 print("-" * 60)
 try:
     from predictor import load_models, predict_hybrid_appliance
-    from schemas import ACInput, WashingMachineInput, CeilingFanInput
-    
+    from schemas import ACInput, CeilingFanInput, WashingMachineInput
+
     models = load_models()
     print("✅ Models loaded successfully")
-    
+
     # Test AC with usage_pattern
     ac_input = ACInput(
         season="summer",
@@ -77,11 +79,13 @@ try:
         ac_type="split",
         ac_usage_pattern="heavy",
         ac_hours_per_day=12,
-        num_ac_units=1
+        num_ac_units=1,
     )
     ac_result = predict_hybrid_appliance(models, "ac", ac_input.model_dump())
-    print(f"✅ AC prediction with usage_pattern='heavy': {ac_result['kwh_per_day']:.2f} kWh/day")
-    
+    print(
+        f"✅ AC prediction with usage_pattern='heavy': {ac_result['kwh_per_day']:.2f} kWh/day"
+    )
+
     # Test WM with cycles_per_week
     wm_input = WashingMachineInput(
         season="monsoon",
@@ -90,11 +94,15 @@ try:
         wm_capacity_kg=7.0,
         wm_star_rating=4,
         wm_type="front_load",
-        wm_cycles_per_week=8
+        wm_cycles_per_week=8,
     )
-    wm_result = predict_hybrid_appliance(models, "washing_machine", wm_input.model_dump())
-    print(f"✅ WM prediction with cycles_per_week=8: {wm_result['kwh_per_day']:.2f} kWh/day")
-    
+    wm_result = predict_hybrid_appliance(
+        models, "washing_machine", wm_input.model_dump()
+    )
+    print(
+        f"✅ WM prediction with cycles_per_week=8: {wm_result['kwh_per_day']:.2f} kWh/day"
+    )
+
     # Test Fan with num_fans
     fan_input = CeilingFanInput(
         season="summer",
@@ -103,11 +111,11 @@ try:
         num_ceiling_fans=5,
         fan_star_rating=5,
         fan_type="bldc",
-        fan_hours_per_day=14
+        fan_hours_per_day=14,
     )
     fan_result = predict_hybrid_appliance(models, "ceiling_fan", fan_input.model_dump())
     print(f"✅ Fan prediction with num_fans=5: {fan_result['kwh_per_day']:.2f} kWh/day")
-    
+
 except Exception as e:
     print(f"❌ Prediction test failed: {e}")
 
@@ -123,13 +131,10 @@ print("-" * 60)
 print("OVERALL SYSTEM         | +7-9% (88.5% → 95-97%)")
 
 # Final Summary
-print("\n" + "="*60)
+print("\n" + "=" * 60)
 print("SUMMARY")
-print("="*60)
-all_checks = (
-    all([col in df.columns for col in required_cols]) and
-    all(checks.values())
-)
+print("=" * 60)
+all_checks = all([col in df.columns for col in required_cols]) and all(checks.values())
 
 if all_checks:
     print("✅ ALL CRITICAL FIELDS SUCCESSFULLY IMPLEMENTED")
@@ -139,4 +144,4 @@ if all_checks:
 else:
     print("⚠️  Some checks failed - review above details")
 
-print("="*60 + "\n")
+print("=" * 60 + "\n")

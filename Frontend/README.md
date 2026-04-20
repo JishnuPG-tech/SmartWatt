@@ -22,8 +22,8 @@ SmartWatt Frontend is a Next.js application for household energy estimation work
 
 ## Interface Preview
 
-| Assessment Flow | Dashboard |
-|---|---|
+| Assessment Flow                                                                             | Dashboard                                                                                      |
+| ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | <img src="../docs/screenshots/smartwatt-workflow.png" alt="Assessment flow" width="100%" /> | <img src="../docs/screenshots/frontend-dashboard.png" alt="Frontend dashboard" width="100%" /> |
 
 If images are not visible yet, add files in `docs/screenshots/` from the repository root.
