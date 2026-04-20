@@ -161,7 +161,7 @@ def test_field_mapping():
                 )
                 success = False
 
-        return success
+        assert success
 
     except Exception as e:
         print(f"❌ Field mapping failed: {e}")
