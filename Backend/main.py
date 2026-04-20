@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, HTTPException
@@ -9,7 +10,7 @@ from pydantic import BaseModel, Field
 from routers import appliances
 
 # Initialize App & Predictor
-app = FastAPI(title="SmartWatt AI Backend")
+app = FastAPI(title="SmartWatt AI Backend", lifespan=lifespan)
 # Explicitly initialize predictor here to ensure singleton is warm,
 # although the router also gets it.
 predictor = get_predictor()
@@ -27,8 +28,8 @@ app.add_middleware(
 app.include_router(appliances.router)
 
 
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     """Load all AI models on server startup to ensure fast first responses"""
     print("\n" + "=" * 50)
     print("      SMARTWATT AI ENGINE STARTUP")
@@ -38,6 +39,9 @@ async def startup_event():
     print("\n" + "=" * 50)
     print("      READY TO SERVE PREDICTIONS")
     print("=" * 50 + "\n")
+
+
+    yield
 
 
 @app.get("/health")
