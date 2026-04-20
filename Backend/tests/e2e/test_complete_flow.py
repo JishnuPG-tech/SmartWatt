@@ -217,7 +217,7 @@ def test_training_columns():
             else:
                 print(f"  ✅ {appliance}: All {len(cols)} columns present")
 
-        return all_present
+        assert all_present
 
     except Exception as e:
         print(f"❌ Training columns check failed: {e}")
