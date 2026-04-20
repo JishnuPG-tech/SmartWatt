@@ -10,23 +10,7 @@ from pydantic import BaseModel, Field
 from routers import appliances
 
 # Initialize App & Predictor
-app = FastAPI(title="SmartWatt AI Backend", lifespan=lifespan)
-# Explicitly initialize predictor here to ensure singleton is warm,
-# although the router also gets it.
 predictor = get_predictor()
-
-# CORS (The Bouncer of the Club)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Include Routers
-app.include_router(appliances.router)
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -41,6 +25,24 @@ async def lifespan(app: FastAPI):
     print("=" * 50 + "\n")
 
     yield
+
+app = FastAPI(title="SmartWatt AI Backend", lifespan=lifespan)
+# Explicitly initialize predictor here to ensure singleton is warm,
+# although the router also gets it.
+
+# CORS (The Bouncer of the Club)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Include Routers
+app.include_router(appliances.router)
+
+
 
 
 @app.get("/health")
