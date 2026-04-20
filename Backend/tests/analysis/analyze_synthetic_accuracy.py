@@ -112,8 +112,8 @@ def analyze_dataset():
             predicted = eval_df['predicted']
             
             # R² Score
-            ss_res = np.sum((actual - predicted)   2)
-            ss_tot = np.sum((actual - actual.mean())   2)
+            ss_res = np.sum((actual - predicted) ** 2)
+            ss_tot = np.sum((actual - actual.mean()) ** 2)
             r2 = 1 - (ss_res / ss_tot)
             
             # MAPE
