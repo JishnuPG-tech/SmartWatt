@@ -1,0 +1,1 @@
+fix: add cache clean to Vercel install command to resolve integrity errors
