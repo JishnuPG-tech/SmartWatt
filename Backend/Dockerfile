@@ -1,9 +1,6 @@
 # Use official lightweight Python image
 FROM python:3.9-slim
 
-# Set working directory
-WORKDIR /app
-
 # Set environment variables to prevent Python from writing pyc files and buffering stdout
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -13,17 +10,26 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
+# Set up a new user named "user" with user ID 1000
+# Hugging Face Spaces requires running Docker containers as a non-root user
+RUN useradd -m -u 1000 user
+USER user
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:$PATH
+
+WORKDIR $HOME/app
+
 # Copy requirements first to leverage Docker cache
-COPY requirements.txt .
+COPY --chown=user requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application
-COPY . .
+COPY --chown=user . $HOME/app
 
-# Expose the API port (Default 8000)
-EXPOSE 8000
+# Expose the API port 7860 for Hugging Face
+EXPOSE 7860
 
-# Command to run the application dynamically picking up the PORT env variable
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Command to run the application on Hugging Face port 7860
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
