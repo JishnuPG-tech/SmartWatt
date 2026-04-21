@@ -51,6 +51,19 @@ jobs:
       - name: Build Android APK (Debug)
         working-directory: ./Frontend/android
         run: |
+          # Resolve Kotlin duplicate class error by aligning stdlib versions to 1.8.22
+          echo "
+          allprojects {
+              configurations.all {
+                  resolutionStrategy {
+                      force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
+                      force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'
+                      force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
+                  }
+              }
+          }
+          " >> build.gradle
+          
           chmod +x gradlew
           ./gradlew assembleDebug
 
