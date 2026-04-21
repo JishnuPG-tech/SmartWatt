@@ -30,7 +30,8 @@ jobs:
       - name: Install Frontend Dependencies
         working-directory: ./Frontend
         run: |
-          npm ci 
+          npm install
+          npm i lightningcss-linux-x64-gnu --no-save 
 
       - name: Build Next.js App
         working-directory: ./Frontend
