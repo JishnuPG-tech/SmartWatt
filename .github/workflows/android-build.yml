@@ -30,7 +30,11 @@ jobs:
       - name: Install Frontend Dependencies
         working-directory: ./Frontend
         run: |
-          npm install
+          # Remove Windows-bound lockfile to allow Linux binaries to install properly
+          rm -f package-lock.json
+          npm install --include=optional
+          # Explicitly install the missing native build module for Tailwind v4
+          npm i lightningcss-linux-x64-gnu -D
           # Fixing the baseline-browser-mapping old data error from your local terminal
           npm i baseline-browser-mapping@latest -D 
 
