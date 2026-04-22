@@ -1,4 +1,4 @@
-import { api } from "./client";
+import { api, backendConfigError, getApiErrorMessage } from "./client";
 import { ApplianceUsageDetails, AppliancePrediction } from "../types";
 import { transformApplianceData } from "../transformFields";
 
@@ -8,6 +8,10 @@ export const predictAppliance = async (
   details: ApplianceUsageDetails,
   totalBill: number,
 ) => {
+  if (backendConfigError) {
+    throw new Error(backendConfigError);
+  }
+
   try {
     // Transform UI field names/values to backend format
     const transformedDetails = transformApplianceData(name, details);
@@ -20,7 +24,9 @@ export const predictAppliance = async (
     return response.data;
   } catch (err) {
     console.error(`Prediction Failed for ${name}:`, err);
-    return { status: "error", prediction: 0 }; // Safe Default
+    throw new Error(
+      `Prediction failed for ${name}: ${getApiErrorMessage(err)}`,
+    );
   }
 };
 
@@ -29,6 +35,10 @@ export const simulateSavings = async (
   details: ApplianceUsageDetails,
   totalBill: number,
 ) => {
+  if (backendConfigError) {
+    throw new Error(backendConfigError);
+  }
+
   try {
     // Transform details for each appliance in the simulation
     const transformedDetails: Record<string, unknown> = {};
@@ -50,7 +60,9 @@ export const simulateSavings = async (
     return response.data;
   } catch (err) {
     console.error("Optimization Failed:", err);
-    return { status: "error", insights: [] };
+    throw new Error(
+      `Optimization request failed: ${getApiErrorMessage(err)}`,
+    );
   }
 };
 
@@ -64,6 +76,10 @@ export const predictAllAppliances = async (
     total_bill: number;
   }>,
 ) => {
+  if (backendConfigError) {
+    throw new Error(backendConfigError);
+  }
+
   try {
     // Transform all request details
     const transformedRequests = requests.map((req) => ({
@@ -90,6 +106,8 @@ export const predictAllAppliances = async (
     return response.data;
   } catch (err) {
     console.error("Batch Prediction Failed:", err);
-    return {}; // Return empty object to prevent crash
+    throw new Error(
+      `Batch prediction request failed: ${getApiErrorMessage(err)}`,
+    );
   }
 };

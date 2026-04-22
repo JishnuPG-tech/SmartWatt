@@ -672,7 +672,10 @@ export function useAnalysisEngine(
       setLoading(false);
     } catch (e: any) {
       console.error("Analysis Failed:", e);
-      setError(e.message || "Unknown error");
+      const errorMessage =
+        e?.message ||
+        "Could not connect to prediction server. Check NEXT_PUBLIC_BACKEND_URL and backend status.";
+      setError(errorMessage);
       toast.error("Analysis failed.");
       setLoading(false);
     }
