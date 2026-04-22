@@ -47,24 +47,32 @@ jobs:
           NEXT_PUBLIC_BACKEND_URL_SECRET: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
           NEXT_PUBLIC_BACKEND_URL_VAR: ${{ vars.NEXT_PUBLIC_BACKEND_URL }}
         run: |
+          DEFAULT_SUPABASE_URL="https://zslsxcbvvxarpwmxsuhy.supabase.co"
+          DEFAULT_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpzbHN4Y2J2dnhhcnB3bXhzdWh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MTAwMDIsImV4cCI6MjA3NjM4NjAwMn0.6DPTtfSRkkMqsl84pbV7Rxk_4agGdPz3oqj76cgyCrg"
+          DEFAULT_BACKEND_URL="https://lonewolf2005-smartwatt-backend.hf.space"
+
           NEXT_PUBLIC_SUPABASE_URL="$NEXT_PUBLIC_SUPABASE_URL_SECRET"
           if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ]; then
             NEXT_PUBLIC_SUPABASE_URL="$NEXT_PUBLIC_SUPABASE_URL_VAR"
+          fi
+          if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ]; then
+            NEXT_PUBLIC_SUPABASE_URL="$DEFAULT_SUPABASE_URL"
           fi
 
           NEXT_PUBLIC_SUPABASE_ANON_KEY="$NEXT_PUBLIC_SUPABASE_ANON_KEY_SECRET"
           if [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]; then
             NEXT_PUBLIC_SUPABASE_ANON_KEY="$NEXT_PUBLIC_SUPABASE_ANON_KEY_VAR"
           fi
+          if [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]; then
+            NEXT_PUBLIC_SUPABASE_ANON_KEY="$DEFAULT_SUPABASE_ANON_KEY"
+          fi
 
           NEXT_PUBLIC_BACKEND_URL="$NEXT_PUBLIC_BACKEND_URL_SECRET"
           if [ -z "$NEXT_PUBLIC_BACKEND_URL" ]; then
             NEXT_PUBLIC_BACKEND_URL="$NEXT_PUBLIC_BACKEND_URL_VAR"
           fi
-
-          if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ] || [ -z "$NEXT_PUBLIC_BACKEND_URL" ]; then
-            echo "Missing required GitHub values: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, and NEXT_PUBLIC_BACKEND_URL (secret or variable)"
-            exit 1
+          if [ -z "$NEXT_PUBLIC_BACKEND_URL" ]; then
+            NEXT_PUBLIC_BACKEND_URL="$DEFAULT_BACKEND_URL"
           fi
 
           {
