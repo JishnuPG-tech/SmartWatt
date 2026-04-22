@@ -42,10 +42,16 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-          NEXT_PUBLIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+          NEXT_PUBLIC_BACKEND_URL_SECRET: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+          NEXT_PUBLIC_BACKEND_URL_VAR: ${{ vars.NEXT_PUBLIC_BACKEND_URL }}
         run: |
+          NEXT_PUBLIC_BACKEND_URL="$NEXT_PUBLIC_BACKEND_URL_SECRET"
+          if [ -z "$NEXT_PUBLIC_BACKEND_URL" ]; then
+            NEXT_PUBLIC_BACKEND_URL="$NEXT_PUBLIC_BACKEND_URL_VAR"
+          fi
+
           if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ] || [ -z "$NEXT_PUBLIC_BACKEND_URL" ]; then
-            echo "Missing required GitHub secrets: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY and/or NEXT_PUBLIC_BACKEND_URL"
+            echo "Missing required GitHub values: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, and NEXT_PUBLIC_BACKEND_URL (secret or variable)"
             exit 1
           fi
 
