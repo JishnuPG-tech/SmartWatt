@@ -60,9 +60,7 @@ export const simulateSavings = async (
     return response.data;
   } catch (err) {
     console.error("Optimization Failed:", err);
-    throw new Error(
-      `Optimization request failed: ${getApiErrorMessage(err)}`,
-    );
+    throw new Error(`Optimization request failed: ${getApiErrorMessage(err)}`);
   }
 };
 
