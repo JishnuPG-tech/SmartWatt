@@ -20,18 +20,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: npm
+          cache-dependency-path: Frontend/package-lock.json
 
       - name: Setup Java (Requirement for Android SDK)
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '21'
+          java-version: '17'
 
       - name: Install Frontend Dependencies
         working-directory: ./Frontend
-        run: |
-          rm -f package-lock.json
-          npm install
+        run: npm ci
 
       - name: Build Next.js App
         working-directory: ./Frontend
@@ -41,12 +41,10 @@ jobs:
       - name: Setup Capacitor & Add Android
         working-directory: ./Frontend
         run: |
-          # We run add if the android folder does not exist, otherwise sync
           if [ ! -d "android" ]; then
             npx cap add android
-          else
-            npx cap sync android
           fi
+          npx cap sync android
 
       - name: Build Android APK (Debug)
         working-directory: ./Frontend/android
