@@ -18,7 +18,7 @@ class _ApplianceSelectionScreenState extends State<ApplianceSelectionScreen> {
       'items': [
         {'id': 'air_conditioner', 'label': 'AC', 'icon': LucideIcons.airVent, 'color': const Color(0xFF22D3EE), 'hasQuantity': false},
         {'id': 'refrigerator', 'label': 'Fridge', 'icon': LucideIcons.refrigerator, 'color': const Color(0xFF60A5FA), 'hasQuantity': false},
-        {'id': 'washing_machine', 'label': 'Washing M.', 'icon': LucideIcons.washingMachine, 'color': const Color(0xFF818CF8), 'hasQuantity': false},
+        {'id': 'washing_machine', 'label': 'Washing M.', 'icon': LucideIcons.waves, 'color': const Color(0xFF818CF8), 'hasQuantity': false},
         {'id': 'geyser', 'label': 'Geyser', 'icon': LucideIcons.showerHead, 'color': const Color(0xFFF87171), 'hasQuantity': false},
         {'id': 'microwave', 'label': 'Microwave', 'icon': LucideIcons.microwave, 'color': const Color(0xFFFB923C), 'hasQuantity': false},
         {'id': 'kettle', 'label': 'Kettle', 'icon': LucideIcons.coffee, 'color': const Color(0xFFD97706), 'hasQuantity': false},
@@ -29,7 +29,7 @@ class _ApplianceSelectionScreenState extends State<ApplianceSelectionScreen> {
       'title': 'Kitchen Appliances',
       'items': [
         {'id': 'mixer', 'label': 'Mixer', 'icon': LucideIcons.disc, 'color': const Color(0xFF94A3B8), 'hasQuantity': false},
-        {'id': 'rice_cooker', 'label': 'Rice Cooker', 'icon': LucideIcons.cookingPot, 'color': Colors.white, 'hasQuantity': false},
+        {'id': 'rice_cooker', 'label': 'Rice Cooker', 'icon': LucideIcons.utensils, 'color': Colors.white, 'hasQuantity': false},
         {'id': 'toaster', 'label': 'Toaster', 'icon': LucideIcons.sandwich, 'color': const Color(0xFFFDBA74), 'hasQuantity': false},
         {'id': 'food_processor', 'label': 'Food Proc.', 'icon': LucideIcons.utensils, 'color': const Color(0xFF9CA3AF), 'hasQuantity': false},
       ]
