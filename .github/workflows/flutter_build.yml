@@ -1,0 +1,45 @@
+name: Build Flutter App
+
+on:
+  push:
+    branches:
+      - main
+      - android-logo-assets
+    paths:
+      - 'FlutterApp/**'
+      - '.github/workflows/flutter_build.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+
+      - name: Install Dependencies
+        working-directory: ./FlutterApp
+        run: flutter pub get
+
+      - name: Build APK
+        working-directory: ./FlutterApp
+        run: flutter build apk --release
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: smartwatt-flutter-apk
+          path: FlutterApp/build/app/outputs/flutter-apk/app-release.apk
