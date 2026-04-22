@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase, supabaseConfigError } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -18,6 +18,14 @@ export default function RegisterPage() {
     setLoading(true);
     setError(null);
 
+    if (supabaseConfigError) {
+      setError(
+        "Authentication is not configured for this app build. Please contact support.",
+      );
+      setLoading(false);
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       setLoading(false);
@@ -30,10 +38,20 @@ export default function RegisterPage() {
       return;
     }
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+    let error;
+    try {
+      const result = await supabase.auth.signUp({
+        email,
+        password,
+      });
+      error = result.error;
+    } catch {
+      setError(
+        "Network error while contacting authentication server. Check internet connection and Supabase URL.",
+      );
+      setLoading(false);
+      return;
+    }
 
     if (error) {
       setError(error.message);

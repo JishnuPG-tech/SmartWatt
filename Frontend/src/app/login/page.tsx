@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase, supabaseConfigError } from "@/lib/supabaseClient";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -25,11 +25,30 @@ function LoginForm() {
     setError(null);
     setMessage(null);
 
-    const { data: authData, error: authError } =
-      await supabase.auth.signInWithPassword({
+    if (supabaseConfigError) {
+      setError(
+        "Authentication is not configured for this app build. Please contact support.",
+      );
+      setLoading(false);
+      return;
+    }
+
+    let authData;
+    let authError;
+    try {
+      const result = await supabase.auth.signInWithPassword({
         email,
         password,
       });
+      authData = result.data;
+      authError = result.error;
+    } catch {
+      setError(
+        "Network error while contacting authentication server. Check internet connection and Supabase URL.",
+      );
+      setLoading(false);
+      return;
+    }
 
     if (authError) {
       setError(authError.message);
