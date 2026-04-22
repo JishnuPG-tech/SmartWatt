@@ -1,7 +1,9 @@
 import axios from "axios";
 
 // The address of your Python Backend
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://lonewolf2005-smartwatt-backend.hf.space";
+const API_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  "https://lonewolf2005-smartwatt-backend.hf.space";
 console.log("🔌 API BASE URL:", API_URL);
 
 export const api = axios.create({
