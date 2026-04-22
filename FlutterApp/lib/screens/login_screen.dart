@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'mode_selection_screen.dart';
+import 'dashboard_screen.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -39,9 +40,9 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       
       if (response.user != null) {
-        // Navigate to Mode Selection (equivalent to router.push('/'))
+        // Navigate to Dashboard (equivalent to router.push('/dashboard'))
         if (!mounted) return;
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ModeSelectionScreen()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const DashboardScreen()));
         return;
       }
       */
@@ -49,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // Mock Login for demonstration purposes until backend is configured
       await Future.delayed(const Duration(seconds: 2));
       if (!mounted) return;
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ModeSelectionScreen()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const DashboardScreen()));
       
     } on AuthException catch (e) {
       setState(() => _error = e.message);
