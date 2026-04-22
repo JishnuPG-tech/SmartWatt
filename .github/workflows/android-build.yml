@@ -33,6 +33,10 @@ jobs:
         working-directory: ./Frontend
         run: npm ci
 
+      - name: Fix Tailwind Optional Dependency on Linux
+        working-directory: ./Frontend
+        run: npm install --no-save @tailwindcss/oxide-linux-x64-gnu
+
       - name: Build Next.js App
         working-directory: ./Frontend
         # This will export the static files to the 'out' directory
