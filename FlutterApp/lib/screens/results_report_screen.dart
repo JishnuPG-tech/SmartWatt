@@ -3,6 +3,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../components/tariff_visualizer.dart';
 import '../components/benchmark_card.dart';
+import '../utils/pdf_generator.dart';
 
 class ResultsReportScreen extends StatelessWidget {
   const ResultsReportScreen({Key? key}) : super(key: key);
@@ -131,7 +132,14 @@ class ResultsReportScreen extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    PdfGenerator.generateAndSavePDF(
+                      householdKwh: 250,
+                      estimatedBill: 1250,
+                      avgCostPerUnit: 5.0,
+                      numPeople: '4',
+                    );
+                  },
                   style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF059669), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), elevation: 4),
                   child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [Icon(LucideIcons.download, size: 20), SizedBox(width: 8), Text('Save PDF', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))]),
                 ),
