@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../components/tariff_visualizer.dart';
+import '../components/benchmark_card.dart';
 
 class ResultsReportScreen extends StatelessWidget {
   const ResultsReportScreen({Key? key}) : super(key: key);
@@ -63,6 +65,16 @@ class ResultsReportScreen extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 24),
+            
+            // Tariff Visualizer (Slab Pricing)
+            const TariffVisualizer(householdKwh: 250),
+            
+            const SizedBox(height: 8),
+
+            // Peer Benchmark Card
+            const BenchmarkCard(householdKwh: 250, numPeople: '4'),
+
             const SizedBox(height: 24),
             
             // Charts Container
