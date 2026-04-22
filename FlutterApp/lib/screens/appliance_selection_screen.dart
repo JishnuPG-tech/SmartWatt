@@ -16,17 +16,43 @@ class _ApplianceSelectionScreenState extends State<ApplianceSelectionScreen> {
     {
       'title': 'Major Appliances',
       'items': [
-        {'id': 'air_conditioner', 'label': 'AC', 'icon': LucideIcons.airVent, 'color': const Color(0xFF60A5FA), 'hasQuantity': true, 'key': 'num_ac'},
+        {'id': 'air_conditioner', 'label': 'AC', 'icon': LucideIcons.airVent, 'color': const Color(0xFF22D3EE), 'hasQuantity': false},
         {'id': 'refrigerator', 'label': 'Fridge', 'icon': LucideIcons.refrigerator, 'color': const Color(0xFF60A5FA), 'hasQuantity': false},
-        {'id': 'washing_machine', 'label': 'Washing M.', 'icon': LucideIcons.washingMachine, 'color': const Color(0xFF60A5FA), 'hasQuantity': false},
-        {'id': 'geyser', 'label': 'Water Heater', 'icon': LucideIcons.showerHead, 'color': const Color(0xFF60A5FA), 'hasQuantity': true, 'key': 'num_geyser'},
+        {'id': 'washing_machine', 'label': 'Washing M.', 'icon': LucideIcons.washingMachine, 'color': const Color(0xFF818CF8), 'hasQuantity': false},
+        {'id': 'geyser', 'label': 'Geyser', 'icon': LucideIcons.showerHead, 'color': const Color(0xFFF87171), 'hasQuantity': false},
+        {'id': 'microwave', 'label': 'Microwave', 'icon': LucideIcons.microwave, 'color': const Color(0xFFFB923C), 'hasQuantity': false},
+        {'id': 'kettle', 'label': 'Kettle', 'icon': LucideIcons.coffee, 'color': const Color(0xFFD97706), 'hasQuantity': false},
+        {'id': 'induction', 'label': 'Induction', 'icon': LucideIcons.zap, 'color': const Color(0xFFEF4444), 'hasQuantity': false},
+      ]
+    },
+    {
+      'title': 'Kitchen Appliances',
+      'items': [
+        {'id': 'mixer', 'label': 'Mixer', 'icon': LucideIcons.disc, 'color': const Color(0xFF94A3B8), 'hasQuantity': false},
+        {'id': 'rice_cooker', 'label': 'Rice Cooker', 'icon': LucideIcons.cookingPot, 'color': Colors.white, 'hasQuantity': false},
+        {'id': 'toaster', 'label': 'Toaster', 'icon': LucideIcons.sandwich, 'color': const Color(0xFFFDBA74), 'hasQuantity': false},
+        {'id': 'food_processor', 'label': 'Food Proc.', 'icon': LucideIcons.utensils, 'color': const Color(0xFF9CA3AF), 'hasQuantity': false},
       ]
     },
     {
       'title': 'Lighting & Fans',
       'items': [
-        {'id': 'fans', 'label': 'Ceiling Fans', 'icon': LucideIcons.wind, 'color': const Color(0xFF34D399), 'hasQuantity': true, 'key': 'num_fans'},
-        {'id': 'led_lights', 'label': 'LED Bulbs', 'icon': LucideIcons.lightbulb, 'color': const Color(0xFFFBBF24), 'hasQuantity': true, 'key': 'num_led'},
+        {'id': 'fans', 'label': 'Ceiling Fan', 'icon': LucideIcons.fan, 'color': const Color(0xFF93C5FD), 'hasQuantity': true, 'key': 'num_fans'},
+        {'id': 'led_lights', 'label': 'LED Bulb', 'icon': LucideIcons.lightbulb, 'color': const Color(0xFFFACC15), 'hasQuantity': true, 'key': 'num_led'},
+        {'id': 'cfl_lights', 'label': 'CFL Bulb', 'icon': LucideIcons.lightbulb, 'color': Colors.white, 'hasQuantity': true, 'key': 'num_cfl'},
+        {'id': 'tube_lights', 'label': 'Tube Light', 'icon': LucideIcons.lightbulb, 'color': const Color(0xFFE2E8F0), 'hasQuantity': true, 'key': 'num_tube'},
+      ]
+    },
+    {
+      'title': 'Other Appliances',
+      'items': [
+        {'id': 'tv', 'label': 'Television', 'icon': LucideIcons.tv, 'color': const Color(0xFF34D399), 'hasQuantity': false},
+        {'id': 'desktop', 'label': 'Desktop PC', 'icon': LucideIcons.monitor, 'color': const Color(0xFF3B82F6), 'hasQuantity': false},
+        {'id': 'laptop', 'label': 'Laptop', 'icon': LucideIcons.laptop, 'color': const Color(0xFF38BDF8), 'hasQuantity': false},
+        {'id': 'pump', 'label': 'Water Pump', 'icon': LucideIcons.droplets, 'color': const Color(0xFF2563EB), 'hasQuantity': false},
+        {'id': 'iron', 'label': 'Iron', 'icon': LucideIcons.shirt, 'color': const Color(0xFFEAB308), 'hasQuantity': false},
+        {'id': 'hair_dryer', 'label': 'Hair Dryer', 'icon': LucideIcons.wind, 'color': const Color(0xFFF472B6), 'hasQuantity': false},
+        {'id': 'vacuum', 'label': 'Vacuum', 'icon': LucideIcons.wind, 'color': const Color(0xFF2DD4BF), 'hasQuantity': false},
       ]
     }
   ];
