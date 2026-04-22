@@ -1,55 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'mode_selection_screen.dart';
-import 'register_screen.dart';
+import 'login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  final String? message;
-  const LoginScreen({Key? key, this.message}) : super(key: key);
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
   String? _error;
-  String? _message;
 
-  @override
-  void initState() {
-    super.initState();
-    _message = widget.message;
-  }
-
-  Future<void> _handleLogin() async {
+  Future<void> _handleSignup() async {
     setState(() {
       _isLoading = true;
       _error = null;
     });
 
+    if (_passwordController.text != _confirmPasswordController.text) {
+      setState(() {
+        _error = "Passwords do not match";
+        _isLoading = false;
+      });
+      return;
+    }
+
+    if (_passwordController.text.length < 6) {
+      setState(() {
+        _error = "Password must be at least 6 characters";
+        _isLoading = false;
+      });
+      return;
+    }
+
     try {
       // Uncomment when Supabase is initialized in main.dart
       /*
-      final response = await Supabase.instance.client.auth.signInWithPassword(
+      final response = await Supabase.instance.client.auth.signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
       
-      if (response.user != null) {
-        // Navigate to Mode Selection (equivalent to router.push('/'))
-        if (!mounted) return;
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ModeSelectionScreen()));
-        return;
-      }
+      if (!mounted) return;
+      // Navigate to Login with success flag equivalent
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen(message: "Registration successful! Please login.")));
+      return;
       */
       
-      // Mock Login for demonstration purposes until backend is configured
+      // Mock Register for demonstration purposes until backend is configured
       await Future.delayed(const Duration(seconds: 2));
       if (!mounted) return;
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ModeSelectionScreen()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
       
     } on AuthException catch (e) {
       setState(() => _error = e.message);
@@ -64,6 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -99,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Login to access your energy estimator',
+                  'Create your account',
                   style: TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
                 ),
                 const SizedBox(height: 32),
@@ -115,19 +122,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(_error!, style: const TextStyle(color: Color(0xFFF87171), fontSize: 12), textAlign: TextAlign.center),
-                  ),
-
-                // Success Message
-                if (_message != null)
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 24),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0x1A22C55E),
-                      border: Border.all(color: const Color(0x8022C55E)),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(_message!, style: const TextStyle(color: Color(0xFF4ADE80), fontSize: 12), textAlign: TextAlign.center),
                   ),
 
                 // Form Fields
@@ -152,10 +146,30 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
+                    
                     const Text('Password', style: TextStyle(color: Color(0xFFE2E8F0), fontSize: 14, fontWeight: FontWeight.w500)),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _passwordController,
+                      obscureText: true,
+                      style: const TextStyle(color: Color(0xFFE2E8F0)),
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: const Color(0xFF0E1117),
+                        hintText: '••••••••',
+                        hintStyle: const TextStyle(color: Color(0xFF475569)),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFF475569))),
+                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFF475569))),
+                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFF3B82F6))),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    const Text('Confirm Password', style: TextStyle(color: Color(0xFFE2E8F0), fontSize: 14, fontWeight: FontWeight.w500)),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _confirmPasswordController,
                       obscureText: true,
                       style: const TextStyle(color: Color(0xFFE2E8F0)),
                       decoration: InputDecoration(
@@ -178,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _handleLogin,
+                    onPressed: _isLoading ? null : _handleSignup,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2563EB),
                       disabledBackgroundColor: const Color(0x802563EB),
@@ -188,20 +202,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: _isLoading 
                       ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                      : const Text('Login', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      : const Text('Register', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                 ),
 
                 const SizedBox(height: 24),
                 
                 // Footer
-                const Text("Don't have an account?", style: TextStyle(color: Color(0xFF94A3B8), fontSize: 14)),
+                const Text("Already have an account?", style: TextStyle(color: Color(0xFF94A3B8), fontSize: 14)),
                 const SizedBox(height: 8),
                 TextButton(
                   onPressed: () {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const RegisterScreen()));
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
                   },
-                  child: const Text('Create Account', style: TextStyle(color: Color(0xFF60A5FA), fontSize: 14, fontWeight: FontWeight.w600)),
+                  child: const Text('Back to Login', style: TextStyle(color: Color(0xFF60A5FA), fontSize: 14, fontWeight: FontWeight.w600)),
                 )
               ],
             ),
