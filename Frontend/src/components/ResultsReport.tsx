@@ -107,17 +107,21 @@ export default function ResultsReport({
   const sortedBreakdown = [...results.breakdown].sort((a, b) => b.kwh - a.kwh);
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 animate-in fade-in duration-200">
-      {/* Header */}
-      {/* Header */}
-      <div className="flex flex-col items-center">
-        <h1 className="text-4xl md:text-6xl font-black tracking-tighter mb-4 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent filter drop-shadow-lg">
-          SMARTWATT
-        </h1>
-        <p className="text-slate-400 text-lg md:text-xl font-light tracking-wide">
-          Kerala Energy Estimator
-        </p>
+    <div className="w-full flex flex-col min-h-screen bg-[#0a0e27] animate-in fade-in duration-500 pb-[100px]">
+      {/* Sticky Mobile App Header */}
+      <div className="sticky top-0 z-40 bg-[#0a0e27]/90 backdrop-blur-md border-b border-slate-800 px-4 py-4 flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center border border-blue-500/30">
+            <Zap className="w-4 h-4 text-blue-400" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-white leading-tight">SmartWatt</h1>
+            <p className="text-[10px] text-blue-400 font-medium tracking-wide uppercase">Results Dashboard</p>
+          </div>
+        </div>
       </div>
+
+      <div className="px-4 pt-6 flex-1 max-w-lg mx-auto w-full">
 
       {/* "Hero" Analysis Summary Card */}
       <div className="section bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-[#334155] p-0 rounded-2xl mb-10 overflow-hidden shadow-2xl shadow-blue-900/10">
@@ -136,7 +140,7 @@ export default function ResultsReport({
           </div>
         </div>
 
-        <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch relative animate-in fade-in duration-700">
+        <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch relative animate-in fade-in duration-700">
           {/* Stat 1: Total Bill (Hero Card) - Clean & Solid */}
           <div className="group relative overflow-hidden rounded-2xl bg-slate-900 border border-slate-800 p-8 flex flex-col justify-between transition-all duration-300 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10">
             <div className="absolute top-0 right-0 p-4">
@@ -404,7 +408,7 @@ export default function ResultsReport({
           </div>
         </div>
 
-        <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Donut Chart - Energy Distribution */}
           <div className="bg-[#1a202c]/50 border border-slate-700/50 rounded-xl p-4 overflow-hidden relative">
             <h3 className="text-slate-300 font-medium mb-2 text-center text-sm uppercase tracking-wider">
@@ -701,7 +705,7 @@ export default function ResultsReport({
           <span className="text-xs text-slate-500">AI Savings Engine</span>
         </div>
 
-        <div className="p-8">
+        <div className="p-5">
           {!optimization ? (
             <div className="text-center py-4">
               <p className="text-slate-400 mb-6 max-w-xl mx-auto text-sm leading-relaxed text-center">
@@ -787,20 +791,25 @@ export default function ResultsReport({
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex gap-4 justify-center">
-        <button onClick={onRestart} className="st-button-secondary px-8">
-          START NEW ESTIMATE
-        </button>
-        <button
-          onClick={() =>
-            generatePDF(household, billDetails, results, avgCost, smartInsights)
-          }
-          className="st-button px-8 flex items-center gap-2 bg-gradient-to-r from-[#047857] to-[#059669] hover:from-[#059669] hover:to-[#10b981] border-none"
-        >
-          <Download size={18} />
-          DOWNLOAD REPORT (PDF)
-        </button>
+      </div> {/* Close max-w-lg container */}
+      
+      {/* Sticky Bottom Navigation Bar */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 z-50 shadow-2xl safe-area-pb">
+        <div className="max-w-lg mx-auto flex gap-3">
+          <button
+            onClick={onRestart}
+            className="flex-1 flex items-center justify-center py-4 rounded-2xl bg-slate-800 text-slate-300 font-semibold active:scale-95 transition-all border border-slate-700 text-sm shadow-sm"
+          >
+            New Estimate
+          </button>
+          <button
+            onClick={() => generatePDF(household, billDetails, results, avgCost, smartInsights)}
+            className="flex-[1.5] flex items-center justify-center gap-2 py-4 rounded-2xl bg-emerald-600 text-white font-bold active:scale-95 transition-all shadow-lg shadow-emerald-600/30 text-sm"
+          >
+            <Download className="w-4 h-4" />
+            Save PDF
+          </button>
+        </div>
       </div>
     </div>
   );

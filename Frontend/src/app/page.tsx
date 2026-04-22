@@ -70,9 +70,9 @@ function SmartWattApp() {
     mode: null as "quick" | "detailed" | null,
     household: {
       num_people: 4,
-      season: "Monsoon (June - September)",
-      house_type: "Apartment",
-      location_type: "Urban",
+      season: "monsoon",
+      house_type: "apartment",
+      location_type: "urban",
       kwh: 300,
       estimated_bill: 0,
     },
@@ -156,8 +156,8 @@ function SmartWattApp() {
             ...prev,
             household: {
               num_people: currentData.num_people ?? 4,
-              season: currentData.season ?? "Monsoon (June - September)",
-              house_type: currentData.house_type ?? "Apartment",
+              season: currentData.season ?? "monsoon",
+              house_type: currentData.house_type ?? "apartment",
               location_type:
                 currentData.appliance_usage?.location_type ?? "urban",
               kwh: currentData.bi_monthly_kwh ?? 300,
@@ -203,9 +203,9 @@ function SmartWattApp() {
       mode: null,
       household: {
         num_people: 4,
-        season: "Monsoon (June - September)",
-        house_type: "Apartment",
-        location_type: "Urban",
+        season: "monsoon",
+        house_type: "apartment",
+        location_type: "urban",
         kwh: 300,
         estimated_bill: 0,
       },

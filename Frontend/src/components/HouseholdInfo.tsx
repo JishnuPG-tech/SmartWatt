@@ -8,7 +8,10 @@ import {
   CloudRain,
   Snowflake,
   MapPin,
-} from "lucide-react"; // Imports
+  ArrowRight,
+  ArrowLeft,
+  Zap
+} from "lucide-react";
 import { calculateBill } from "@/lib/tariffUtils";
 
 interface HouseholdData {
@@ -22,7 +25,7 @@ interface HouseholdData {
 
 interface Props {
   data: HouseholdData;
-  details: Record<string, unknown>; // Add details prop
+  details: Record<string, unknown>;
   onUpdate: (data: HouseholdData) => void;
   onNext: () => void;
   onBack: () => void;
@@ -39,28 +42,18 @@ export default function HouseholdInfo({
   mode,
   trainingId,
 }: Props) {
-  // KSEB Logic extracted to @/lib/tariffUtils
-
-  // Debounce timer ref
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleUpdate = (newData: HouseholdData) => {
-    // Recalculate bill if kwh changed
     const newBill = calculateBill(newData.kwh || 0);
     const updatedData = { ...newData, estimated_bill: newBill };
 
-    // 1. Update UI immediately
     onUpdate(updatedData);
 
-    // 2. Debounce Save to DB (500ms delay)
-    // Clear existing timer
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
 
-    // Set new timer
-    // set new timer
     saveTimerRef.current = setTimeout(() => {
-      if (!trainingId) return; // Skip save if no trainingId yet
-      console.log("Saving training data...", updatedData); // Debug log
+      if (!trainingId) return;
       saveTraining(trainingId, {
         num_people: updatedData.num_people,
         season: updatedData.season,
@@ -68,14 +61,12 @@ export default function HouseholdInfo({
         location_type: updatedData.location_type,
         bi_monthly_kwh: updatedData.kwh,
         estimated_bill: updatedData.estimated_bill,
-        // CRITICAL: Pass existing details so they aren't wiped out
         appliance_usage: details as any,
       });
       saveTimerRef.current = null;
     }, 500);
   };
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
@@ -83,30 +74,13 @@ export default function HouseholdInfo({
   }, []);
 
   const biMonthlyCost = calculateBill(data.kwh);
-  const monthlyCost = Math.round(biMonthlyCost / 2);
   const monthlyUnits = data.kwh / 2;
 
-  // Determine consumption status
   const getStatus = (mUnits: number) => {
-    if (mUnits < 120)
-      return {
-        label: "LOW",
-        color: "#10b981",
-        text: "Below average - Good efficiency!",
-      };
-    if (mUnits < 150)
-      return {
-        label: "AVERAGE",
-        color: "#f59e0b",
-        text: "Standard consumption",
-      };
-    if (mUnits < 200)
-      return {
-        label: "ABOVE AVERAGE",
-        color: "#f97316",
-        text: "Higher than average - Room for savings",
-      };
-    return { label: "HIGH", color: "#ef4444", text: "Very high consumption" };
+    if (mUnits < 120) return { label: "LOW", color: "#10b981", text: "Good efficiency!" };
+    if (mUnits < 150) return { label: "AVERAGE", color: "#f59e0b", text: "Standard usage" };
+    if (mUnits < 200) return { label: "HIGH", color: "#f97316", text: "Room for savings" };
+    return { label: "VERY HIGH", color: "#ef4444", text: "High consumption" };
   };
 
   const status = getStatus(monthlyUnits);
@@ -115,91 +89,107 @@ export default function HouseholdInfo({
     {
       id: "small",
       icon: <Home className="w-6 h-6 text-blue-400" />,
-      label: "Small Home",
-      description: "2-3 people, 150-250 units",
+      label: "Small",
       people: 3,
       units: 200,
     },
     {
       id: "medium",
       icon: <Building2 className="w-6 h-6 text-blue-500" />,
-      label: "Medium Home",
-      description: "4-5 people, 300-450 units",
+      label: "Medium",
       people: 4,
       units: 375,
     },
     {
       id: "large",
       icon: <Castle className="w-6 h-6 text-blue-600" />,
-      label: "Large Home",
-      description: "6+ people, 500+ units",
+      label: "Large",
       people: 6,
       units: 550,
     },
   ];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Header */}
-      <div className="flex flex-col items-center">
-        <h1 className="text-4xl md:text-6xl font-black tracking-tighter mb-4 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent filter drop-shadow-lg">
-          SMARTWATT
-        </h1>
-        <p className="text-slate-400 text-lg md:text-xl font-light tracking-wide">
-          Kerala Energy Estimator
-        </p>
-      </div>
-
-      {/* Progress */}
-      <div className="section mb-8">
-        <div className="flex justify-between text-sm text-[#cbd5e0] mb-2 font-medium">
-          <span>Step 1 of 4: Household Information</span>
-          <span>
-            {mode === "quick" ? "Quick Estimate" : "Detailed Estimate"}
-          </span>
-        </div>
-        <div className="w-full bg-[rgba(30,41,59,0.4)] h-2 rounded-sm overflow-hidden">
-          <div className="bg-gradient-to-r from-[#1e40af] to-[#3b82f6] h-full w-1/4 rounded-sm"></div>
+    <div className="w-full flex flex-col min-h-screen bg-[#0a0e27] animate-in fade-in duration-500 pb-[100px]">
+      
+      {/* Sticky Mobile App Header */}
+      <div className="sticky top-0 z-40 bg-[#0a0e27]/90 backdrop-blur-md border-b border-slate-800 px-4 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center">
+            <Zap className="w-4 h-4 text-blue-400" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-white leading-tight">SmartWatt</h1>
+            <p className="text-xs text-blue-400 font-medium">Household Info</p>
+          </div>
         </div>
       </div>
 
-      <div className="section mb-8">
-        <h2 className="text-xl font-normal text-slate-400 tracking-wide mb-6">
-          Detailed Estimate - Basic Information
-        </h2>
-
-        {/* Quick Setup */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          {quickSetupOptions.map((option) => (
-            <button
-              key={option.id}
-              onClick={() =>
-                handleUpdate({
-                  ...data,
-                  num_people: option.people,
-                  kwh: option.units,
-                })
-              }
-              className="flex-1 bg-[#1a202c] hover:bg-[#2c3e50] border border-[#334155] hover:border-[#667eea] rounded-xl p-4 transition-all duration-300 group text-left"
-            >
-              <div className="mb-3 p-2 bg-slate-800 rounded-lg w-fit group-hover:bg-slate-700 transition-colors">
-                {option.icon}
-              </div>
-              <div className="font-medium text-[#e2e8f0] text-lg mb-1">
-                {option.label}
-              </div>
-              <div className="text-xs text-[#94a3b8]">{option.description}</div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Inputs */}
-      <div className="space-y-8">
-        {/* People */}
+      <div className="px-4 pt-6 space-y-8 flex-1 max-w-lg mx-auto w-full">
+        
+        {/* Quick Setup - Horizontal Scroll for Mobile */}
         <div>
-          <label className="text-[#e2e8f0] mb-3 block text-base">
-            Number of people in household
+          <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Quick Presets</h2>
+          <div className="flex overflow-x-auto pb-4 gap-3 snap-x hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {quickSetupOptions.map((option) => (
+              <button
+                key={option.id}
+                onClick={() => handleUpdate({ ...data, num_people: option.people, kwh: option.units })}
+                className="flex-none w-[120px] snap-start bg-slate-800/50 hover:bg-slate-700 active:scale-95 border border-slate-700 rounded-2xl p-4 transition-all flex flex-col items-center justify-center gap-2"
+              >
+                <div className="p-2 bg-slate-900/50 rounded-full">{option.icon}</div>
+                <div className="font-semibold text-sm text-slate-200">{option.label}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Total Units Input - Prominent Native-like Field */}
+        <div className="bg-slate-800/40 border border-slate-700/50 p-5 rounded-3xl">
+          <label className="text-sm font-semibold text-slate-300 block mb-1">
+            Bi-Monthly Units (KSEB Bill)
+          </label>
+          <p className="text-xs text-slate-500 mb-4">Total units consumed over 2 months</p>
+          <div className="relative">
+            <input
+              type="number"
+              min="0"
+              inputMode="numeric"
+              value={data.kwh || ""}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value);
+                handleUpdate({ ...data, kwh: isNaN(val) ? 0 : Math.max(0, val) });
+              }}
+              className="w-full bg-slate-900/80 border-2 border-slate-700 rounded-2xl py-4 px-5 text-2xl font-bold text-white focus:border-blue-500 focus:ring-0 transition-all outline-none"
+              placeholder="e.g. 250"
+            />
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 font-medium">kWh</div>
+          </div>
+        </div>
+
+        {/* Analysis Card - Compact Mobile Widget */}
+        {data.kwh > 0 && (
+          <div className="bg-slate-800/60 border border-slate-700 rounded-3xl p-5 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-2 h-full" style={{ background: status.color }}></div>
+            <div className="flex justify-between items-start pl-2">
+              <div>
+                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Est. Bill</h4>
+                <div className="text-3xl font-black text-white">₹{biMonthlyCost}</div>
+              </div>
+              <div className="text-right">
+                <span className="text-xs font-bold px-2 py-1 rounded-full" style={{ backgroundColor: `${status.color}20`, color: status.color }}>
+                  {status.label}
+                </span>
+                <div className="text-xs text-slate-400 mt-2">{monthlyUnits} units/mo</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* People Slider */}
+        <div className="bg-slate-800/40 border border-slate-700/50 p-5 rounded-3xl">
+          <label className="text-sm font-semibold text-slate-300 block mb-4">
+            Household Size
           </label>
           <div className="flex items-center gap-4">
             <input
@@ -207,246 +197,126 @@ export default function HouseholdInfo({
               min="1"
               max="15"
               value={data.num_people}
-              onChange={(e) =>
-                handleUpdate({ ...data, num_people: parseInt(e.target.value) })
-              }
-              className="flex-1 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              onChange={(e) => handleUpdate({ ...data, num_people: parseInt(e.target.value) })}
+              className="flex-1 h-3 bg-slate-900 rounded-full appearance-none cursor-pointer accent-blue-500"
             />
-            <span className="text-[#e2e8f0] font-medium w-8 text-center">
+            <div className="w-12 h-12 bg-blue-600/20 text-blue-400 font-bold text-xl rounded-full flex items-center justify-center shrink-0">
               {data.num_people}
-            </span>
+            </div>
           </div>
         </div>
 
-        {/* Season */}
+        {/* Touch-Friendly Radio Buttons for House Type */}
         <div>
-          <label className="text-[#e2e8f0] mb-2 block text-base">
-            Current Season
-          </label>
-          <p className="text-sm text-slate-400 mb-3">
-            Season affects AC and water heater usage significantly
-          </p>
-          <div className="space-y-3">
-            {[
-              {
-                id: "summer",
-                label: "Summer (March - May)",
-                icon: <Sun className="w-5 h-5 text-orange-400" />,
-              },
-              {
-                id: "monsoon",
-                label: "Monsoon (June - September)",
-                icon: <CloudRain className="w-5 h-5 text-blue-400" />,
-              },
-              {
-                id: "winter",
-                label: "Winter (October - February)",
-                icon: <Snowflake className="w-5 h-5 text-cyan-300" />,
-              },
-            ].map((opt) => (
-              <label
-                key={opt.id}
-                className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all ${data.season === opt.id ? "bg-blue-600/10 border-blue-500" : "border-[#334155] hover:bg-[#2c3e50]"}`}
-                onClick={() => handleUpdate({ ...data, season: opt.id })}
-              >
-                <div
-                  className={`w-5 h-5 rounded-full border flex items-center justify-center mr-3 transition-colors ${data.season === opt.id ? "border-blue-500" : "border-[#334155]"}`}
-                >
-                  {data.season === opt.id && (
-                    <div className="w-3 h-3 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 animate-in zoom-in duration-200" />
-                  )}
-                </div>
-                <div className="flex items-center gap-3">
-                  {opt.icon}
-                  <span
-                    className={`${data.season === opt.id ? "text-white" : "text-[#94a3b8]"}`}
-                  >
-                    {opt.label}
-                  </span>
-                </div>
-              </label>
-            ))}
-          </div>
-        </div>
-        {/* House Type */}
-        <div>
-          <label className="text-[#e2e8f0] mb-3 block text-base">
-            House Type
-          </label>
-          <div className="space-y-3">
+          <label className="text-sm font-semibold text-slate-300 block mb-3 pl-1">House Type</label>
+          <div className="grid grid-cols-1 gap-3">
             {[
               { id: "apartment", label: "Apartment" },
               { id: "independent", label: "Independent House" },
               { id: "villa", label: "Villa" },
             ].map((opt) => (
-              <label
+              <button
                 key={opt.id}
-                className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-all ${data.house_type === opt.id ? "bg-blue-600/10 border-blue-500" : "border-[#334155] hover:bg-[#2c3e50]"}`}
+                onClick={() => handleUpdate({ ...data, house_type: opt.id })}
+                className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all active:scale-[0.98] ${
+                  data.house_type === opt.id 
+                    ? "bg-blue-600/20 border-blue-500 text-white" 
+                    : "bg-slate-800/40 border-slate-700/50 text-slate-400 hover:bg-slate-800"
+                }`}
               >
-                <input
-                  type="radio"
-                  name="house_type"
-                  value={opt.id}
-                  checked={data.house_type === opt.id}
-                  onChange={(e) =>
-                    handleUpdate({ ...data, house_type: e.target.value })
-                  }
-                  className="accent-blue-500 w-4 h-4"
-                />
-                <span className="text-[#e2e8f0]">{opt.label}</span>
-              </label>
+                <span className="font-medium text-base">{opt.label}</span>
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${data.house_type === opt.id ? "border-blue-400" : "border-slate-500"}`}>
+                  {data.house_type === opt.id && <div className="w-2.5 h-2.5 bg-blue-400 rounded-full" />}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Season selector */}
+        <div>
+          <label className="text-sm font-semibold text-slate-300 block mb-3 pl-1">Current Season</label>
+          <div className="grid grid-cols-1 gap-3">
+            {[
+              { id: "summer", label: "Summer", sub: "Mar-May", icon: <Sun className="w-5 h-5 text-orange-400" /> },
+              { id: "monsoon", label: "Monsoon", sub: "Jun-Sep", icon: <CloudRain className="w-5 h-5 text-blue-400" /> },
+              { id: "winter", label: "Winter", sub: "Oct-Feb", icon: <Snowflake className="w-5 h-5 text-cyan-300" /> },
+            ].map((opt) => (
+              <button
+                key={opt.id}
+                onClick={() => handleUpdate({ ...data, season: opt.id })}
+                className={`w-full flex items-center p-4 rounded-2xl border-2 transition-all active:scale-[0.98] ${
+                  data.season === opt.id 
+                    ? "bg-blue-600/20 border-blue-500" 
+                    : "bg-slate-800/40 border-slate-700/50 hover:bg-slate-800"
+                }`}
+              >
+                <div className="flex-shrink-0 mr-4 p-2 bg-slate-900/50 rounded-full">{opt.icon}</div>
+                <div className="flex-1 text-left">
+                  <div className={`font-medium text-base ${data.season === opt.id ? "text-white" : "text-slate-300"}`}>{opt.label}</div>
+                  <div className="text-xs text-slate-500">{opt.sub}</div>
+                </div>
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${data.season === opt.id ? "border-blue-400" : "border-slate-500"}`}>
+                  {data.season === opt.id && <div className="w-2.5 h-2.5 bg-blue-400 rounded-full" />}
+                </div>
+              </button>
             ))}
           </div>
         </div>
 
         {/* Location Type */}
         <div>
-          <label className="text-[#e2e8f0] mb-2 block text-base">
-            Location Type
-          </label>
-          <p className="text-sm text-slate-400 mb-3">
-            Location affects power quality and appliance efficiency in Kerala
-          </p>
-          <div className="space-y-3">
+          <label className="text-sm font-semibold text-slate-300 block mb-3 pl-1">Location Type</label>
+          <div className="grid grid-cols-2 gap-3">
             {[
-              {
-                id: "urban",
-                label: "Urban",
-                description: "City areas with stable power supply",
-                icon: <Building2 className="w-5 h-5 text-purple-400" />,
-              },
-              {
-                id: "rural",
-                label: "Rural",
-                description: "Village areas with occasional voltage drops",
-                icon: <MapPin className="w-5 h-5 text-green-400" />,
-              },
+              { id: "urban", label: "Urban", icon: <Building2 className="w-6 h-6 text-purple-400 mb-2" /> },
+              { id: "rural", label: "Rural", icon: <MapPin className="w-6 h-6 text-green-400 mb-2" /> },
             ].map((opt) => (
-              <label
+              <button
                 key={opt.id}
-                className={`flex items-start p-4 rounded-lg border cursor-pointer transition-all ${data.location_type === opt.id ? "bg-blue-600/10 border-blue-500" : "border-[#334155] hover:bg-[#2c3e50]"}`}
                 onClick={() => handleUpdate({ ...data, location_type: opt.id })}
+                className={`flex flex-col items-center justify-center p-5 rounded-2xl border-2 transition-all active:scale-[0.98] ${
+                  data.location_type === opt.id 
+                    ? "bg-blue-600/20 border-blue-500 text-white" 
+                    : "bg-slate-800/40 border-slate-700/50 text-slate-400 hover:bg-slate-800"
+                }`}
               >
-                <div
-                  className={`w-5 h-5 rounded-full border flex items-center justify-center mr-3 mt-0.5 flex-shrink-0 transition-colors ${data.location_type === opt.id ? "border-blue-500" : "border-[#334155]"}`}
-                >
-                  {data.location_type === opt.id && (
-                    <div className="w-3 h-3 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 animate-in zoom-in duration-200" />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    {opt.icon}
-                    <span
-                      className={`font-medium ${data.location_type === opt.id ? "text-white" : "text-[#e2e8f0]"}`}
-                    >
-                      {opt.label}
-                    </span>
-                  </div>
-                  <span className="text-xs text-[#94a3b8]">
-                    {opt.description}
-                  </span>
-                </div>
-              </label>
+                {opt.icon}
+                <span className="font-semibold text-sm">{opt.label}</span>
+              </button>
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Total Units */}
-        <div>
-          <label className="text-[#e2e8f0] mb-2 block text-base">
-            Total units from your KSEB bill
-          </label>
-          <p className="text-sm text-slate-400 mb-3">
-            Note: KSEB bills are bi-monthly (2 months). Look for &apos;Units
-            Consumed&apos; or &apos;Total Units&apos; on your bill.
-          </p>
-          <input
-            type="number"
-            min="0"
-            value={data.kwh || ""}
-            onChange={(e) => {
-              const val = parseFloat(e.target.value);
-              handleUpdate({ ...data, kwh: isNaN(val) ? 0 : Math.max(0, val) });
-            }}
-            className="w-full bg-[#1e293b] border border-[#334155] rounded-lg py-3 px-4 text-[#e2e8f0] focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none font-mono"
-            placeholder="e.g., 250"
-          />
-        </div>
-
-        {/* Analysis Card */}
-        <div
-          className="p-6 rounded-xl border relative overflow-hidden transition-all duration-300 bg-gradient-to-br from-[#1e293b] to-[#0f172a]"
-          style={{
-            borderColor: status.color,
-            boxShadow: `0 4px 20px -5px ${status.color}40`,
-          }}
-        >
-          <div
-            className="absolute top-0 left-0 w-1 h-full"
-            style={{ background: status.color }}
-          ></div>
-
-          <h4 className="text-[#94a3b8] uppercase tracking-wider text-xs font-bold mb-2">
-            Consumption Analysis
-          </h4>
-
-          <div className="flex items-center gap-3 mb-4">
-            <span
-              className="text-2xl font-bold"
-              style={{ color: status.color }}
-            >
-              {status.label}
-            </span>
-            <span className="text-[#64748b] text-sm">consumption</span>
-          </div>
-
-          <div className="space-y-2 text-sm text-[#cbd5e0] font-mono">
-            <div className="flex justify-between">
-              <span>• Bi-monthly:</span>
-              <span>{data.kwh} units</span>
-            </div>
-            <div className="flex justify-between">
-              <span>• Monthly average:</span>
-              <span>{monthlyUnits} units/month</span>
-            </div>
-            <div className="text-[#94a3b8] italic pt-2 border-t border-slate-700/50 mt-2">
-              {status.text}
-            </div>
-          </div>
-
-          <div className="mt-4 pt-4 border-t border-slate-700/50">
-            <span className="text-slate-300">Estimated KSEB Bill:</span>
-            <div className="text-xl font-bold text-white mt-1">
-              ₹{biMonthlyCost}
-              <span className="text-xs font-normal text-slate-500 ml-2">
-                (bi-monthly)
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-2 text-[10px] text-slate-500 text-center italic">
-            Note: Energy charge shown is an estimate. Small variations may occur
-            due to slab rounding.
-          </div>
+      {/* Sticky Bottom Navigation Bar */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-slate-900/95 backdrop-blur-xl border-t border-slate-800 z-50 shadow-2xl safe-area-pb">
+        <div className="max-w-lg mx-auto flex gap-3">
+          <button
+            onClick={onBack}
+            className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl bg-slate-800 text-slate-300 font-semibold active:scale-95 transition-all border border-slate-700"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Back
+          </button>
+          <button
+            onClick={onNext}
+            className="flex-[2] flex items-center justify-center gap-2 py-4 rounded-2xl bg-blue-600 text-white font-bold active:scale-95 transition-all shadow-lg shadow-blue-600/30"
+          >
+            Select Appliances
+            <ArrowRight className="w-5 h-5" />
+          </button>
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="flex justify-between mt-12 pt-6 border-t border-slate-800">
-        <button
-          onClick={onBack}
-          className="px-8 py-3 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-800 transition-colors"
-        >
-          ← Back to Mode Selection
-        </button>
-        <button
-          onClick={onNext}
-          className="px-8 py-3 rounded-lg bg-gradient-to-r from-blue-700 to-blue-600 text-white hover:from-blue-600 hover:to-blue-500 transition-all shadow-lg shadow-blue-900/20"
-        >
-          Next: Appliances →
-        </button>
-      </div>
+      <style jsx global>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .safe-area-pb {
+          padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+        }
+      `}</style>
     </div>
   );
 }
