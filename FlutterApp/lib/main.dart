@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'screens/household_info_screen.dart';
 import 'screens/mode_selection_screen.dart';
+import 'screens/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,8 +41,8 @@ class SmartWattApp extends StatelessWidget {
           scrolledUnderElevation: 0,
         ),
       ),
-      // Set the initial route to ModeSelectionScreen
-      home: const ModeSelectionScreen(),
+      // Set the initial route to LoginScreen
+      home: const LoginScreen(),
     );
   }
 }
