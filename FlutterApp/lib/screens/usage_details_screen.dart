@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import '../config/usage_forms.dart';
 import 'results_report_screen.dart';
 
 class UsageDetailsScreen extends StatefulWidget {
   final List<String> selectedAppliances;
   
-  const UsageDetailsScreen({Key? key, required this.selectedAppliances}) : super(key: key);
+  const UsageDetailsScreen({
+    Key? key, 
+    // Fallback default for testing if not passed
+    this.selectedAppliances = const ['refrigerator', 'air_conditioner', 'mixer', 'fans'],
+  }) : super(key: key);
 
   @override
   State<UsageDetailsScreen> createState() => _UsageDetailsScreenState();
@@ -13,75 +18,130 @@ class UsageDetailsScreen extends StatefulWidget {
 
 class _UsageDetailsScreenState extends State<UsageDetailsScreen> {
   int _currentStep = 1;
-  final int _totalSteps = 3;
+  late int _totalSteps;
+  
+  // Store form state (applianceId -> key -> value)
+  final Map<String, Map<String, dynamic>> _formState = {};
 
-  Widget _buildPatternCard({required String title, required String subtitle, required IconData icon, required String selectedPattern}) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0x661E293B),
-        border: Border.all(color: const Color(0x80334155)),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: const Color(0x333B82F6),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: const Color(0xFF60A5FA), size: 24),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-                    Text(subtitle, style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 12)),
-                  ],
-                ),
-              ),
-            ],
+  @override
+  void initState() {
+    super.initState();
+    _totalSteps = widget.selectedAppliances.length;
+    
+    // Initialize default values based on config
+    for (String applianceId in widget.selectedAppliances) {
+      _formState[applianceId] = {};
+      final config = UsageForms.config[applianceId];
+      if (config != null) {
+        if (config.containsKey('defaultPattern')) {
+          _formState[applianceId]!['pattern'] = config['defaultPattern'];
+        }
+        if (config.containsKey('fields')) {
+          for (var field in config['fields']) {
+            _formState[applianceId]![field['key']] = field['options'][0]['value'];
+          }
+        }
+        if (config.containsKey('eventBased')) {
+          _formState[applianceId]!['q1'] = config['eventBased']['q1']['options'][0]['value'];
+          _formState[applianceId]!['q2'] = config['eventBased']['q2']['options'][0]['value'];
+        }
+        if (config.containsKey('roomBased')) {
+          _formState[applianceId]!['hours'] = config['roomBased']['defaultHours'].toString();
+        }
+      }
+    }
+  }
+
+  Widget _buildDropdown(String applianceId, String key, String label, List<dynamic> options) {
+    String currentValue = _formState[applianceId]?[key] ?? options[0]['value'];
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 12, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color: const Color(0xFF0F172A),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFF334155)),
           ),
-          const SizedBox(height: 16),
-          // Mock Dropdown for Pattern Selection
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            decoration: BoxDecoration(
-              color: const Color(0xFF0F172A),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFF334155)),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: currentValue,
+              isExpanded: true,
+              dropdownColor: const Color(0xFF1E293B),
+              icon: const Icon(LucideIcons.chevronDown, color: Color(0xFF94A3B8), size: 16),
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+              items: options.map<DropdownMenuItem<String>>((dynamic option) {
+                return DropdownMenuItem<String>(
+                  value: option['value'].toString(),
+                  child: Text(option['label'].toString()),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                if (newValue != null) {
+                  setState(() {
+                    _formState[applianceId]![key] = newValue;
+                  });
+                }
+              },
             ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: selectedPattern,
-                isExpanded: true,
-                dropdownColor: const Color(0xFF1E293B),
-                icon: const Icon(LucideIcons.chevronDown, color: Color(0xFF94A3B8), size: 16),
-                style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
-                items: <String>['Heavy Usage (10+ hrs)', 'Medium Usage (4-8 hrs)', 'Light Usage (1-3 hrs)'].map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {},
-              ),
-            ),
-          )
-        ],
-      ),
+          ),
+        ),
+        const SizedBox(height: 16),
+      ],
     );
+  }
+
+  Widget _buildDynamicForm(String applianceId) {
+    final config = UsageForms.config[applianceId];
+    if (config == null) return const Text('Configuration not found', style: TextStyle(color: Colors.red));
+
+    List<Widget> formElements = [];
+
+    // Pattern Based
+    if (config.containsKey('patterns')) {
+      formElements.add(_buildDropdown(applianceId, 'pattern', 'Usage Pattern', config['patterns']));
+    }
+
+    // Fields Based
+    if (config.containsKey('fields')) {
+      for (var field in config['fields']) {
+        formElements.add(_buildDropdown(applianceId, field['key'], field['label'], field['options']));
+      }
+    }
+
+    // Event Based
+    if (config.containsKey('eventBased')) {
+      var q1 = config['eventBased']['q1'];
+      var q2 = config['eventBased']['q2'];
+      formElements.add(_buildDropdown(applianceId, 'q1', q1['question'], q1['options']));
+      formElements.add(_buildDropdown(applianceId, 'q2', q2['question'], q2['options']));
+    }
+    
+    // Room Based
+    if (config.containsKey('roomBased')) {
+       // Convert presets to dropdown format for simplicity
+       List<dynamic> mappedOptions = (config['roomBased']['presets'] as List).map((p) => {
+         'value': p['val'].toString(),
+         'label': p['label'].toString(),
+       }).toList();
+       formElements.add(_buildDropdown(applianceId, 'hours', 'Daily Usage', mappedOptions));
+    }
+
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: formElements);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.selectedAppliances.isEmpty) {
+      return const Scaffold(body: Center(child: Text("No appliances selected.", style: TextStyle(color: Colors.white))));
+    }
+
+    String currentApplianceId = widget.selectedAppliances[_currentStep - 1];
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -94,9 +154,9 @@ class _UsageDetailsScreenState extends State<UsageDetailsScreen> {
             const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text('Usage Details', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-                Text('Major Appliances', style: TextStyle(fontSize: 10, color: Color(0xFF60A5FA), fontWeight: FontWeight.w500)),
+              children: [
+                const Text('Usage Details', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+                Text('Configuring ${currentApplianceId.toUpperCase()}', style: const TextStyle(fontSize: 10, color: Color(0xFF60A5FA), fontWeight: FontWeight.w500)),
               ],
             ),
           ],
@@ -112,7 +172,7 @@ class _UsageDetailsScreenState extends State<UsageDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('Step $_currentStep of $_totalSteps', style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                  Text('Appliance $_currentStep of $_totalSteps', style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
                   const SizedBox(height: 8),
                   LinearProgressIndicator(
                     value: _currentStep / _totalSteps,
@@ -125,17 +185,37 @@ class _UsageDetailsScreenState extends State<UsageDetailsScreen> {
               ),
             ),
             
-            _buildPatternCard(
-              title: 'Air Conditioner (AC)',
-              subtitle: 'Select your typical usage pattern',
-              icon: LucideIcons.airVent,
-              selectedPattern: 'Medium Usage (4-8 hrs)',
-            ),
-            _buildPatternCard(
-              title: 'Refrigerator',
-              subtitle: 'Select your fridge size/age',
-              icon: LucideIcons.refrigerator,
-              selectedPattern: 'Medium Usage (4-8 hrs)', // Mapped for demo
+            // Dynamic Appliance Card
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: const Color(0x661E293B),
+                border: Border.all(color: const Color(0x80334155)),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(color: const Color(0x333B82F6), borderRadius: BorderRadius.circular(16)),
+                        child: const Icon(LucideIcons.settings, color: Color(0xFF60A5FA), size: 28),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          currentApplianceId.replaceAll('_', ' ').toUpperCase(),
+                          style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  _buildDynamicForm(currentApplianceId),
+                ],
+              ),
             ),
           ],
         ),
@@ -173,7 +253,7 @@ class _UsageDetailsScreenState extends State<UsageDetailsScreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2563EB), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), elevation: 4),
-                  child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [Text(_currentStep < _totalSteps ? 'Next Category' : 'Calculate', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)), const SizedBox(width: 8), Icon(_currentStep < _totalSteps ? LucideIcons.arrowRight : LucideIcons.calculator, size: 20)]),
+                  child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [Text(_currentStep < _totalSteps ? 'Next' : 'Calculate', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)), const SizedBox(width: 8), Icon(_currentStep < _totalSteps ? LucideIcons.arrowRight : LucideIcons.calculator, size: 20)]),
                 ),
               ),
             ],
