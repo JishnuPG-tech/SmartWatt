@@ -51,11 +51,7 @@ export interface ApplianceUsageDetails {
 
   // Dynamic keys fallback (allows string indexing)
   [key: string]:
-    | string
-    | number
-    | boolean
-    | undefined
-    | Record<string, unknown>;
+    string | number | boolean | undefined | Record<string, unknown>;
 }
 
 export interface BillResult {

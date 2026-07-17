@@ -24,9 +24,7 @@ export const getApiErrorMessage = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
     const status = error.response?.status;
     const responseData = error.response?.data as
-      | { detail?: string; message?: string }
-      | string
-      | undefined;
+      { detail?: string; message?: string } | string | undefined;
     const detail =
       typeof responseData === "string"
         ? responseData
